@@ -1,18 +1,70 @@
+###########################################
+# ARCHIVOS DE CONFIGURACIÓN (NO SUBIR)
+###########################################
 app/config/Database.php
 app/config/*.php
 
-/vendor/
+###########################################
+# COMPOSER / LIBRERÍAS
+###########################################
+vendor/
+composer.lock
 
-# ==============================
-# ARCHIVOS AUTO-GENERADOS (XAMPP)
-# ==============================
+###########################################
+# NODE / FRONT-END (si usas algo)
+###########################################
+node_modules/
+package-lock.json
+
+###########################################
+# ARCHIVOS TEMPORALES / CACHÉS / BACKUPS
+###########################################
+*.log
+*.tmp
+*.temp
+*.bak
+*.old
+*.cache
+*.sql
+*.rar
+*.zip
+*.tar
+
+###########################################
+# ARCHIVOS DEL SISTEMA
+###########################################
+.DS_Store
+Thumbs.db
+desktop.ini
+
+###########################################
+# ARCHIVOS DE EDICIÓN / IDE
+###########################################
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+###########################################
+# SESIONES Y LOGS DE PHP
+###########################################
 *.session
 php_errors.log
 
+###########################################
+# SUBIDAS / IMÁGENES DINÁMICAS
+###########################################
+public/uploads/
+public/img/temp/
 
-/public/uploads/
-/public/img/temp/
-/public/css/*.map
+###########################################
+# MAPAS DE CSS / JS
+###########################################
+*.map
+
+###########################################
+# ENTORNOS / VARIABLES
+###########################################
 .env
 .env.local
 .env.*.local
