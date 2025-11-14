@@ -11,28 +11,29 @@ class Usuario {
     }
 
     //Buscamos por user, retornamos, si no encuentra retorna nulo.
-    public function BuscarNombre($nombre){
+    public function buscarNombre($nombre){
         $sql = 'SELECT * FROM usuario WHERE usnombre = :nombre';
         $consulta = $this->db->prepare($sql);
-        $consulta->execute;
+        $consulta->bindValue(':nombre', $nombre, PDO::PARAM_STR);
+        $consulta->execute();
         $usuario = $consulta->fetch(PDO::FETCH_ASSOC);
 
         return $usuario ?: null;
     }
 
     //Buscamos por id, retornamos, si no encuentra retorna nulo.
-    public function BuscarId($idusuario){
+    public function buscarId($idusuario){
         $sql = 'SELECT * FROM usuario WHERE idusuario = :id';
         $consulta = $this->db->prepare($sql);
         $consulta->bindValue(':id', $idusuario, PDO::PARAM_INT);
-        $consulta->execute;
+        $consulta->execute();
         $usuario = $consulta->fetch(PDO::FETCH_ASSOC);
 
         return $usuario ?: null;
     }
 
     //Listamos todos los usuarios
-    public function ListarUsuarios(){
+    public function listarUsuarios(){
         $sql = 'SELECT * FROM  usuario';
         $consulta = $this->db->query($sql);
         return $consulta->fetchAll(PDO::FETCH_ASSOC);
@@ -41,7 +42,7 @@ class Usuario {
     //Verificamos login con clave hasheada. (devolvemos datos true, null si es false)
     public function verificarLogin($nombre, $claveIngresada)
     {
-        $usuario = $this->BuscarNombre($nombre);
+        $usuario = $this->buscarNombre($nombre);
 
         // No existe usuario o está deshabilitado
         if (!$usuario || !is_null($usuario['usdeshabilitado'])) {
@@ -57,7 +58,7 @@ class Usuario {
     }
 
     //Creo usuario con la pass hasheada.
-    public function CrearUsuario($nombre, $clave, $email){
+    public function crearUsuario($nombre, $clave, $email){
         $hash = password_hash($clave, PASSWORD_DEFAULT);
 
         $sql = "INSERT INTO usuario (usnombre, uspass, usmail, usdeshabilitado)
