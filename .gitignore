@@ -1,0 +1,18 @@
+app/config/Database.php
+app/config/*.php
+
+/vendor/
+
+# ==============================
+# ARCHIVOS AUTO-GENERADOS (XAMPP)
+# ==============================
+*.session
+php_errors.log
+
+
+/public/uploads/
+/public/img/temp/
+/public/css/*.map
+.env
+.env.local
+.env.*.local
