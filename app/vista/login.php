@@ -1,37 +1,66 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Login - Fragancias Prime</title>
-</head>
-<body>
+<?php require_once __DIR__ . '/layouts/header.php'; ?>
 
-    <h1>Iniciar sesión</h1>
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="card shadow p-4" style="max-width: 420px; width: 100%;">
 
-    <?php if (!empty($error)): ?>
-        <p style="color:red;">Usuario o contraseña incorrectos.</p>
-    <?php endif; ?>
+        <h3 class="text-center mb-4 fw-bold">Iniciar Sesión</h3>
 
-    <form action="?controller=auth&action=procesarLogin" method="POST">
-        
-        <label>Usuario:</label>
-        <input type="text" name="usuario" 
-                value="<?= htmlspecialchars($usuarioRecordado ?? '') ?>" required>
-        <br><br>
+        <?php if (!empty($error)): ?>
+            <div class="alert alert-danger text-center">
+                <?= htmlspecialchars($error) ?>
+            </div>
+        <?php endif; ?>
 
-        <label>Contraseña:</label>
-        <input type="password" name="clave" required>
-        <br><br>
+        <form action="?controller=auth&action=login" method="POST">
 
-        <label>
-            <input type="checkbox" name="recordar"
-                <?= !empty($usuarioRecordado) ? 'checked' : '' ?>>
-            Recordarme
-        </label>
-        <br><br>
+            <!-- Usuario -->
+            <div class="mb-3">
+                <label class="form-label">Usuario</label>
+                <input 
+                    type="text"
+                    name="usuario"
+                    class="form-control"
+                    value="<?= isset($_COOKIE['user_saved']) ? htmlspecialchars($_COOKIE['user_saved']) : '' ?>"
+                    required
+                >
+            </div>
 
-        <button type="submit">Ingresar</button>
-    </form>
+            <!-- Contraseña -->
+            <div class="mb-3">
+                <label class="form-label">Contraseña</label>
+                <input 
+                    type="password"
+                    name="clave"
+                    class="form-control"
+                    required
+                >
+            </div>
 
-</body>
-</html>
+            <!-- Recordarme -->
+            <div class="form-check mb-3">
+                <input 
+                    class="form-check-input" 
+                    type="checkbox" 
+                    name="recordarme" 
+                    id="recordarme"
+                    <?= isset($_COOKIE['user_saved']) ? 'checked' : '' ?>
+                >
+                <label class="form-check-label" for="recordarme">
+                    Recordarme
+                </label>
+            </div>
+
+            <!-- Botón -->
+            <button type="submit" class="btn btn-dark w-100 mb-3">
+                Ingresar
+            </button>
+
+            <div class="text-center small">
+                ¿No tenés cuenta? <a href="../vista/registro.php" class="text-decoration-none">Registrate acá</a>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<?php require_once __DIR__ . '/layouts/footer.php'; ?>

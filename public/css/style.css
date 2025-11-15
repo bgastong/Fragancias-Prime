@@ -1,0 +1,39 @@
+.letter-spacing-3 {
+    letter-spacing: 0.25rem;
+}
+
+body {
+    background-color: #f7f7f7;
+}
+.navbar {
+    height: 70px;
+    overflow: hidden;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+.navbar-brand img {
+    max-height: 70px;
+    width: auto;
+    display: block;
+}
+
+body { font-family: Arial; background: #f7f7f7; padding: 30px; }
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    max-width: 600px;
+    margin: auto;
+    box-shadow: 0 0 10px #bbb;
+}
+
+.menu a {
+    margin-right: 15px;
+    text-decoration: none;
+    font-weight: bold;
+    color: #333;
+}
+
+.menu a:hover { color: #007bff; }
