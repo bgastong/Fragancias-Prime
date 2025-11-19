@@ -1,10 +1,5 @@
-.letter-spacing-3 {
-    letter-spacing: 0.25rem;
-}
 
-body {
-    background-color: #f7f7f7;
-}
+/*Navbar*/
 .navbar {
     height: 70px;
     overflow: hidden;
@@ -17,9 +12,35 @@ body {
     width: auto;
     display: block;
 }
+/*derecho de la navbar */
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
 
-body { font-family: Arial; background: #f7f7f7; padding: 30px; }
+/*botones*/
+.nav-btn {
+    text-decoration: none;
+    font-size: 16px;
+    color: #222;
+    padding: 8px 14px;
+    border-radius: 4px;
+    transition: 0.2s ease;
+}
 
+.nav-btn:hover {
+    background-color: #f2f2f2;
+}
+
+.login-btn {
+    font-weight: 600;
+}
+
+.logout-btn {
+    font-weight: 600;
+    color: #b30000;
+}
 .card {
     background: white;
     padding: 20px;
@@ -37,3 +58,118 @@ body { font-family: Arial; background: #f7f7f7; padding: 30px; }
 }
 
 .menu a:hover { color: #007bff; }
+
+.letter-spacing-3 {
+    letter-spacing: 0.25rem;
+}
+
+body {
+    background-color: #f7f7f7;
+    font-family: Arial; background: #f7f7f7; padding: 30px; 
+}
+
+/*carrusel*/
+
+/* contenedor del carrusel */
+.full-carousel {
+    max-width: 100%;
+}
+
+/* img */
+.carousel-img {
+    height: 580px;
+    width: 100%;
+    object-fit: cover;
+}
+
+/* Flechas */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    filter: invert(1);
+}
+
+.full-carousel .carousel-item img {
+    width: 200%;
+    height: 180px;
+    object-fit: cover;
+    display: block;
+}
+
+
+
+
+/*carousel marcas*/
+.carousel-marca-container {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    padding: 20px 0;
+}
+
+.carousel-marca-track {
+    display: flex;
+    transition: transform 0.4s ease-in-out;
+}
+
+.carousel-marca-slide {
+    min-width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background: #11131f;
+    border-radius: 20px;
+    padding: 40px;
+    color: #fff;
+}
+
+.carousel-marca-img img {
+    width: 100%;
+    height: 350px;
+    object-fit: contain;
+}
+
+.carousel-marca-titulo {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.carousel-marca-desc {
+    font-size: 0.95rem;
+    margin-bottom: 10px;
+    color: #e5e5e5;
+}
+
+.carousel-marca-precio {
+    font-size: 1.6rem;
+    font-weight: bold;
+    margin: 20px 0;
+}
+
+.carousel-marca-btn-ver {
+    padding: 12px 24px;
+    background: #f5c76b;
+    color: #11131f;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.carousel-marca-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 42px;
+    height: 42px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.6);
+    color: #fff;
+    cursor: pointer;
+}
+
+.carousel-marca-btn-prev { left: 10px; }
+.carousel-marca-btn-next { right: 10px; }
+
+
+
+/*cards*/
+
