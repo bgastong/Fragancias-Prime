@@ -108,21 +108,25 @@
                                             <i class="bi bi-eye"></i> Ver detalle
                                         </a>
                                         
-                                        <?php if (($producto['procantstock'] ?? 0) > 0): ?>
-                                            <form method="POST" action="?controller=carrito&action=agregar" class="d-inline">
-                                                <input type="hidden" name="idproducto" value="<?= $producto['idproducto'] ?>">
-                                                <input type="hidden" name="cantidad" value="1">
-                                                <button type="submit" class="btn btn-dark btn-sm">
-                                                    <i class="bi bi-cart-plus"></i> Agregar
+                                        <?php if (isset($_SESSION['usuario'])): ?>
+                                            <?php if (($producto['procantstock'] ?? 0) > 0): ?>
+                                                <form method="POST" action="?controller=carrito&action=agregar" class="d-inline">
+                                                    <input type="hidden" name="idproducto" value="<?= $producto['idproducto'] ?>">
+                                                    <input type="hidden" name="cantidad" value="1">
+                                                    <button type="submit" class="btn btn-dark btn-sm">
+                                                        <i class="bi bi-cart-plus"></i> Agregar
+                                                    </button>
+                                                </form>
+                                            <?php else: ?>
+                                                <button class="btn btn-secondary btn-sm" disabled>
+                                                    <i class="bi bi-x-circle"></i> Sin stock
                                                 </button>
-                                            </form>
+                                            <?php endif; ?>
                                         <?php else: ?>
-                                            <button class="btn btn-secondary btn-sm" disabled>
-                                                <i class="bi bi-x-circle"></i> Sin stock
-                                            </button>
+                                            <a href="?controller=auth&action=login" class="btn btn-dark btn-sm">
+                                                <i class="bi bi-box-arrow-in-right"></i> Login para comprar
+                                            </a>
                                         <?php endif; ?>
-                                            </button>
-                                        </form>
                                     </div>
                                 </div>
                             </div>

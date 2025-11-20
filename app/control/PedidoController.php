@@ -3,6 +3,7 @@
 require_once __DIR__ . '/../middleware/AuthMiddleware.php';
 require_once __DIR__ . '/../middleware/RoleMiddleware.php';
 require_once __DIR__ . '/../model/Pedido.php';
+require_once __DIR__ . '/../model/Producto.php';
 require_once __DIR__ . '/../model/Usuario.php';
 require_once __DIR__ . '/../model/MailService.php';
 

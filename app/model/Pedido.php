@@ -134,7 +134,9 @@ class Pedido
             $this->db->commit();
             return $idCompra;
         } catch (Exception $e) {
-            $this->db->rollBack();
+            if ($this->db->inTransaction()) {
+                $this->db->rollBack();
+            }
             throw $e;
         }
     }
@@ -144,7 +146,13 @@ class Pedido
     public function actualizarEstado($idCompra, $nuevoEstadoTipo)
     {
         try {
-            $this->db->beginTransaction();
+            $transaccionIniciada = false;
+            
+            // Solo iniciar transacción si no hay una activa
+            if (!$this->db->inTransaction()) {
+                $this->db->beginTransaction();
+                $transaccionIniciada = true;
+            }
 
             // Cerrar el estado actual
             $sqlCerrar = "UPDATE compraestado 
@@ -162,10 +170,16 @@ class Pedido
             $stmtNuevo->bindParam(':estadoTipo', $nuevoEstadoTipo, PDO::PARAM_INT);
             $stmtNuevo->execute();
 
-            $this->db->commit();
+            // Solo hacer commit si iniciamos la transacción aquí
+            if ($transaccionIniciada) {
+                $this->db->commit();
+            }
+            
             return true;
         } catch (Exception $e) {
-            $this->db->rollBack();
+            if ($this->db->inTransaction()) {
+                $this->db->rollBack();
+            }
             throw $e;
         }
     }
@@ -236,7 +250,9 @@ class Pedido
             
             return ['exito' => true];
         } catch (Exception $e) {
-            $this->db->rollBack();
+            if ($this->db->inTransaction()) {
+                $this->db->rollBack();
+            }
             return ['exito' => false, 'mensaje' => $e->getMessage()];
         }
     }
@@ -301,7 +317,9 @@ class Pedido
             
             return ['exito' => true, 'stockRestaurado' => $pedido['idcompraestadotipo'] >= 2];
         } catch (Exception $e) {
-            $this->db->rollBack();
+            if ($this->db->inTransaction()) {
+                $this->db->rollBack();
+            }
             return ['exito' => false, 'mensaje' => $e->getMessage()];
         }
     }
