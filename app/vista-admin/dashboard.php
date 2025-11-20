@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../middleware/RoleMiddleware.php';
-RoleMiddleware::requiereAdmin();
+RoleMiddleware::requiereAdmin(); // solo admin
 
 require_once __DIR__ . '/../model/Usuario.php';
 require_once __DIR__ . '/../model/Producto.php';

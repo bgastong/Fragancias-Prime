@@ -6,7 +6,7 @@ if (session_status() === PHP_SESSION_NONE) {
 // Cargar middleware para verificar roles
 require_once __DIR__ . '/../../middleware/RoleMiddleware.php';
 
-$usuario = $_SESSION['usuario'] ?? null;
+$usuario = $_SESSION['usuario'] ?? null; // Obtener usuario logueado
 
 // Detectar si estamos en vista admin
 $isAdminView = isset($esVistaAdmin) && $esVistaAdmin === true;
@@ -70,11 +70,11 @@ $isAdminView = isset($esVistaAdmin) && $esVistaAdmin === true;
 <body>
 
     <?php if ($isAdminView): ?>
-        <!-- LAYOUT ADMIN CON SIDEBAR -->
+        <!-- layout admin -->
         <div class="container-fluid">
             <div class="row">
 
-                <!-- Sidebar -->
+                <!-- sidebar -->
                 <nav class="col-md-2 d-md-block sidebar">
                     <div class="position-sticky">
 
@@ -84,7 +84,8 @@ $isAdminView = isset($esVistaAdmin) && $esVistaAdmin === true;
 
                         <ul class="nav flex-column mt-3">
                             <li class="nav-item">
-                                <a class="nav-link <?= isset($activeMenu) && $activeMenu === 'dashboard' ? 'active' : '' ?>"
+                                
+                                <a class="nav-link <?= isset($activeMenu) && $activeMenu === 'dashboard' ? 'active' : '' ?>"  
                                     href="?controller=admin&action=dashboard">
                                     <i class="bi bi-speedometer2"></i> Dashboard
                                 </a>

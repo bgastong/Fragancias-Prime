@@ -37,7 +37,7 @@ class ProductoController
         require_once __DIR__ . '/../vista-admin/productos-listar.php';
     }
 
-    public function crear()
+    public function crear() //ABM - ALTA
     {
         // Solo admin puede crear productos
         AuthMiddleware::requiereAutenticacion();
@@ -104,7 +104,7 @@ class ProductoController
         require_once __DIR__ . '/../vista-admin/productos-crear.php';
     }
 
-    public function editar()
+    public function editar() // ABM - EDITAR
     {
         // Solo admin puede editar productos
         AuthMiddleware::requiereAutenticacion();
@@ -160,7 +160,7 @@ class ProductoController
                     unlink($uploadDir . $producto['imagen']);
                 }
 
-                $extension = pathinfo($_FILES['imagen']['name'], PATHINFO_EXTENSION);
+                $extension = pathinfo($_FILES['imagen']['name'], PATHINFO_EXTENSION); //
                 $nombreArchivo = uniqid() . '.' . $extension;
                 $rutaDestino = $uploadDir . $nombreArchivo;
 
@@ -188,7 +188,7 @@ class ProductoController
         require_once __DIR__ . '/../vista-admin/productos-editar.php';
     }
 
-    public function eliminar()
+    public function eliminar() //ABM - BAJA
     {
         // Solo admin puede eliminar productos
         AuthMiddleware::requiereAutenticacion();

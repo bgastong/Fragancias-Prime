@@ -14,7 +14,7 @@ class RoleMiddleware
         }
 
         // obtengo roles del usuario desde la base de datos
-        require_once __DIR__ . '/../model/Usuario.php';
+        require_once __DIR__ . '/../model/Usuario.php'; // cargar modelo Usuario
         $usuarioModel = new Usuario();
         $roles = $usuarioModel->obtenerRolesUsuario($usuario['idusuario']);
 
