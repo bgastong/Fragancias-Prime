@@ -20,7 +20,7 @@
             <h1 class="display-4 fw-bold text-danger mb-3">Acceso Denegado</h1>
             
             <p class="lead text-muted mb-4">
-                No tenés permisos para acceder a esta sección.
+                No tenes permisos para acceder a esta seccion.
             </p>
 
             <div class="d-flex gap-3 justify-content-center">
@@ -30,7 +30,7 @@
                 
                 <?php if (!isset($_SESSION['usuario'])): ?>
                     <a href="?controller=auth&action=login" class="btn btn-outline-dark btn-lg">
-                        <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión
+                        <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesion
                     </a>
                 <?php endif; ?>
             </div>

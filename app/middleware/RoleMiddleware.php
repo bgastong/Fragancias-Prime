@@ -61,39 +61,24 @@ class RoleMiddleware
     }
 
 
-    //verifico que el uss es admin
     public static function esAdmin()
     {
         return self::tieneRol('admin');
     }
 
-    //verifico que el uss es cliente
     public static function esCliente()
     {
         return self::tieneRol('cliente');
     }
 
-    //verifico que el uss es depósito
-    public static function esDeposito()
-    {
-        return self::tieneRol('deposito');
-    }
 
-
-    //requiere rol admin
     public static function requiereAdmin()
     {
         self::requiereRol('admin');
     }
 
-    //Requiere rol de cliente
     public static function requiereCliente()
     {
         self::requiereRol('cliente');
-    }
-
-    public static function requiereDeposito()
-    {
-        self::requiereRol('deposito');
     }
 }

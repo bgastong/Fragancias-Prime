@@ -5,6 +5,8 @@ require_once __DIR__ . '/../middleware/RoleMiddleware.php';
 require_once __DIR__ . '/../model/Carrito.php';
 require_once __DIR__ . '/../model/Producto.php';
 require_once __DIR__ . '/../model/Pedido.php';
+require_once __DIR__ . '/../model/Usuario.php';
+require_once __DIR__ . '/../model/MailService.php';
 
 class CarritoController
 {
@@ -33,22 +35,41 @@ class CarritoController
         $this->index();
     }
 
-    public function agregar($idProducto, $cantidad = 1)
+    public function agregar()
     {
-        $carrito = new Carrito();
-        $carrito->agregar($idProducto, $cantidad);
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $idProducto = intval($_POST['idproducto'] ?? 0);
+            $cantidad = intval($_POST['cantidad'] ?? 1);
 
-        header("Location: /carrito");
+            $carrito = new Carrito();
+            $productoModel = new Producto();
+            
+            $resultado = $carrito->agregarConValidacion($idProducto, $cantidad, $productoModel);
+            
+            if ($resultado['exito']) {
+                $_SESSION['mensaje_exito'] = $resultado['mensaje'];
+            } else {
+                $_SESSION['mensaje_error'] = $resultado['mensaje'];
+            }
+        }
+
+        header("Location: ?controller=carrito&action=ver");
         exit;
     }
 
 
-    public function quitar($idProducto)
+    public function quitar()
     {
-        $carrito = new Carrito();
-        $carrito->quitar($idProducto);
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $idProducto = intval($_POST['idproducto'] ?? 0);
 
-        header("Location: /carrito");
+            if ($idProducto > 0) {
+                $carrito = new Carrito();
+                $carrito->quitar($idProducto);
+            }
+        }
+
+        header("Location: ?controller=carrito&action=ver");
         exit;
     }
 
@@ -63,48 +84,40 @@ class CarritoController
 
     public function finalizarCompra()
     {
-        // Solo clientes pueden finalizar compra
         AuthMiddleware::requiereAutenticacion();
         RoleMiddleware::requiereCliente();
 
         $carrito = new Carrito();
-        $items = $carrito->obtener();
-
-        if (empty($items)) {
+        $productoModel = new Producto();
+        
+        // Validar stock
+        $validacion = $carrito->validarStock($productoModel);
+        if (!$validacion['exito']) {
+            $_SESSION['mensaje_error'] = $validacion['mensaje'];
             header("Location: ?controller=carrito&action=ver");
             exit;
         }
 
-        $productoModel = new Producto();
-        $itemsCompra = [];
-
-        // Preparar items para la compra
-        foreach ($items as $idProducto => $cantidad) {
-            $itemsCompra[] = [
-                'idproducto' => $idProducto,
-                'cantidad' => $cantidad
-            ];
-        }
-
-        // Crear la compra con estado inicial "iniciada" (1)
+        // Preparar items
+        $itemsCompra = $carrito->prepararItemsCompra();
+        
+        // Crear pedido completo
         $pedidoModel = new Pedido();
+        $usuarioModel = new Usuario();
+        $mailService = new MailService();
         $usuarioId = AuthMiddleware::usuarioId();
         
-        try {
-            $idCompra = $pedidoModel->crear($usuarioId, $itemsCompra);
-            
-            // Vaciar el carrito después de crear la compra
+        $resultado = $pedidoModel->crearPedidoCompleto($usuarioId, $itemsCompra, $usuarioModel, $mailService);
+        
+        if ($resultado['exito']) {
             $carrito->vaciar();
-            
-            // Redirigir a mis pedidos con mensaje de éxito
-            $_SESSION['mensaje_exito'] = "¡Compra realizada exitosamente! N° de pedido: #$idCompra";
+            $_SESSION['mensaje_exito'] = "Compra realizada exitosamente! N de pedido: #{$resultado['idCompra']}";
             header("Location: ?controller=pedido&action=misPedidos");
-            exit;
-            
-        } catch (Exception $e) {
-            $_SESSION['mensaje_error'] = "Error al procesar la compra: " . $e->getMessage();
+        } else {
+            $_SESSION['mensaje_error'] = "Error al procesar la compra: {$resultado['mensaje']}";
             header("Location: ?controller=carrito&action=ver");
-            exit;
         }
+        
+        exit;
     }
 }

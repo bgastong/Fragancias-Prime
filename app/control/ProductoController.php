@@ -6,25 +6,23 @@ require_once __DIR__ . '/../model/Producto.php';
 
 class ProductoController
 {
-    public function index() // Listo todos los productos
+    public function ver()
     {
-        $productoModel = new Producto();
-        $productos = $productoModel->listarTodos();
-
-        require_once __DIR__ . '/../vista/productos.php';
-    }
-
-    public function ver($id) // Detalle de un producto
-    {
-        $productoModel = new Producto();
-        $producto = $productoModel->getProductoById($id);
-
-        if (!$producto) {
-            echo "Producto no encontrado.";
+        $id = $_GET['id'] ?? null;
+        if (!$id) {
+            header("Location: ?controller=home&action=index");
             exit;
         }
 
-        require_once __DIR__ . '/../vista/producto.php';
+        $productoModel = new Producto();
+        $producto = $productoModel->obtenerPorId($id);
+
+        if (!$producto) {
+            header("Location: ?controller=home&action=index");
+            exit;
+        }
+
+        require_once __DIR__ . '/../vista/detalle_producto.php';
     }
 
     public function listar()
@@ -48,7 +46,7 @@ class ProductoController
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Procesar el formulario
             $datos = [
-                'pronombre' => $_POST['pronombre'] ?? '',
+                'pronombre' => '', // Se llenara con la ruta de imagen
                 'prodetalle' => $_POST['prodetalle'] ?? '',
                 'procantstock' => $_POST['procantstock'] ?? 0,
                 'precio' => $_POST['precio'] ?? 0,
@@ -58,9 +56,9 @@ class ProductoController
                 'imagen' => ''
             ];
 
-            // Validar campos requeridos
-            if (empty($datos['pronombre']) || empty($datos['prodetalle'])) {
-                $_SESSION['mensaje_error'] = "Nombre y detalle son obligatorios";
+            // Validar campo requerido
+            if (empty($datos['prodetalle'])) {
+                $_SESSION['mensaje_error'] = "El nombre del producto es obligatorio";
                 require_once __DIR__ . '/../vista-admin/productos-crear.php';
                 return;
             }
@@ -79,7 +77,12 @@ class ProductoController
 
                 if (move_uploaded_file($_FILES['imagen']['tmp_name'], $rutaDestino)) {
                     $datos['imagen'] = $nombreArchivo;
+                    // Guardar la ruta completa en pronombre
+                    $datos['pronombre'] = '/Fragancias Prime/public/upload/productos/' . $nombreArchivo;
                 }
+            } else {
+                // Si no hay imagen, usar ruta vacia
+                $datos['pronombre'] = '';
             }
 
             try {
@@ -127,7 +130,7 @@ class ProductoController
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Procesar el formulario
             $datos = [
-                'pronombre' => $_POST['pronombre'] ?? '',
+                'pronombre' => $producto['pronombre'] ?? '', // Mantener el valor actual, se actualizara solo si hay nueva imagen
                 'prodetalle' => $_POST['prodetalle'] ?? '',
                 'procantstock' => $_POST['procantstock'] ?? 0,
                 'precio' => $_POST['precio'] ?? 0,
@@ -137,9 +140,9 @@ class ProductoController
                 'imagen' => $producto['imagen'] ?? ''
             ];
 
-            // Validar campos requeridos
-            if (empty($datos['pronombre']) || empty($datos['prodetalle'])) {
-                $_SESSION['mensaje_error'] = "Nombre y detalle son obligatorios";
+            // Validar campo requerido
+            if (empty($datos['prodetalle'])) {
+                $_SESSION['mensaje_error'] = "El nombre del producto es obligatorio";
                 require_once __DIR__ . '/../vista-admin/productos-editar.php';
                 return;
             }
@@ -161,8 +164,9 @@ class ProductoController
                 $nombreArchivo = uniqid() . '.' . $extension;
                 $rutaDestino = $uploadDir . $nombreArchivo;
 
-                if (move_uploaded_file($_FILES['imagen']['tmp_name'], $rutaDestino)) {
-                    $datos['imagen'] = $nombreArchivo;
+                if (move_uploaded_file($_FILES['imagen']['tmp_name'], $rutaDestino)) { // Nueva imagen subida
+                    $datos['imagen'] = $nombreArchivo; // Actualizar con nueva imagen
+                    $datos['pronombre'] = '/Fragancias Prime/public/upload/productos/' . $nombreArchivo; // Actualizar ruta
                 }
             }
 
@@ -208,7 +212,7 @@ class ProductoController
         }
 
         try {
-            // Eliminar imagen física si existe
+            // Eliminar imagen fisica si existe
             if (!empty($producto['imagen'])) {
                 $rutaImagen = ROOT_PATH . '/public/upload/productos/' . $producto['imagen'];
                 if (file_exists($rutaImagen)) {

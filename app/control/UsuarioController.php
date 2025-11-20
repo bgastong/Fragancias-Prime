@@ -92,7 +92,7 @@ class UsuarioController
 
     public function habilitar()
     {
-        // Solo admin puede habilitar usuarios
+        // Solo el admin puede habilitar usuarios
         AuthMiddleware::requiereAutenticacion();
         RoleMiddleware::requiereAdmin();
 
@@ -116,5 +116,57 @@ class UsuarioController
 
         header("Location: ?controller=usuario&action=listar");
         exit;
+    }
+
+    public function cambiarContrasena()
+    {
+        AuthMiddleware::requiereAutenticacion();
+        
+        $usuarioId = AuthMiddleware::usuarioId();
+        $usuarioModel = new Usuario();
+        
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $passActual = $_POST['pass_actual'] ?? '';
+            $passNueva = $_POST['pass_nueva'] ?? '';
+            $passConfirmar = $_POST['pass_confirmar'] ?? '';
+            
+            $resultado = $usuarioModel->cambiarContrasenaConValidacion($usuarioId, $passActual, $passNueva, $passConfirmar);
+            
+            if ($resultado['exito']) {
+                $_SESSION['mensaje_exito'] = "Contrasena actualizada exitosamente";
+                header("Location: ?controller=home&action=index");
+                exit;
+            } else {
+                $_SESSION['mensaje_error'] = $resultado['mensaje'];
+            }
+        }
+        
+        require_once __DIR__ . '/../vista/cambiar-contrasena.php';
+    }
+
+    public function cambiarEmail()
+    {
+        AuthMiddleware::requiereAutenticacion();
+        
+        $usuarioId = AuthMiddleware::usuarioId();
+        $usuarioModel = new Usuario();
+        
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $emailNuevo = $_POST['email_nuevo'] ?? '';
+            $password = $_POST['password'] ?? '';
+            
+            $resultado = $usuarioModel->cambiarEmailConValidacion($usuarioId, $emailNuevo, $password);
+            
+            if ($resultado['exito']) {
+                $_SESSION['mensaje_exito'] = "Email actualizado exitosamente";
+                header("Location: ?controller=home&action=index");
+                exit;
+            } else {
+                $_SESSION['mensaje_error'] = $resultado['mensaje'];
+            }
+        }
+        
+        $usuario = $usuarioModel->buscarId($usuarioId);
+        require_once __DIR__ . '/../vista/cambiar-email.php';
     }
 }

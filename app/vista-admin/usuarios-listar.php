@@ -1,10 +1,12 @@
 <?php
-require_once __DIR__ . '/layouts/header-admin.php';
+$esVistaAdmin = true;
+$activeMenu = 'usuarios';
+require_once __DIR__ . '/../vista/layouts/header.php';
 ?>
 
 <div class="admin-content">
     <div class="container-fluid">
-        <h1 class="mb-4">Gestión de Usuarios</h1>
+        <h1 class="mb-4">Gestion de Usuarios</h1>
 
         <?php if (isset($_SESSION['mensaje_exito'])): ?>
             <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -52,7 +54,6 @@ require_once __DIR__ . '/layouts/header-admin.php';
                                             <span class="badge <?=
                                                                 match ($usuario['rol_nombre'] ?? '') {
                                                                     'admin' => 'bg-danger',
-                                                                    'deposito' => 'bg-warning',
                                                                     'cliente' => 'bg-primary',
                                                                     default => 'bg-secondary'
                                                                 }
@@ -79,14 +80,14 @@ require_once __DIR__ . '/layouts/header-admin.php';
                                                     <a href="?controller=usuario&action=deshabilitar&id=<?= $usuario['idusuario'] ?>"
                                                         class="btn btn-sm btn-outline-warning"
                                                         title="Deshabilitar"
-                                                        onclick="return confirm('¿Deshabilitar este usuario?')">
+                                                        onclick="return confirm('Deshabilitar este usuario?')">
                                                         <i class="bi bi-lock"></i>
                                                     </a>
                                                 <?php else: ?>
                                                     <a href="?controller=usuario&action=habilitar&id=<?= $usuario['idusuario'] ?>"
                                                         class="btn btn-sm btn-outline-success"
                                                         title="Habilitar"
-                                                        onclick="return confirm('¿Habilitar este usuario?')">
+                                                        onclick="return confirm('Habilitar este usuario?')">
                                                         <i class="bi bi-unlock"></i>
                                                     </a>
                                                 <?php endif; ?>
@@ -104,5 +105,5 @@ require_once __DIR__ . '/layouts/header-admin.php';
 </div>
 
 <?php
-require_once __DIR__ . '/layouts/footer-admin.php';
+require_once __DIR__ . '/../vista/layouts/footer.php';
 ?>

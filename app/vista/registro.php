@@ -17,7 +17,7 @@
         <div class="col-md-5">
             
             <h2 class="text-center mb-1">Crear cuenta</h2>
-            <p class="text-center text-muted mb-4">Completá los datos para registrarte</p>
+            <p class="text-center text-muted mb-4">Completa los datos para registrarte</p>
 
             <div class="card">
                 <div class="card-body">

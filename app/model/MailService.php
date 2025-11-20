@@ -27,61 +27,211 @@ class MailService
         $this->defaultFrom = $config['smtp']['from'];
     }
 
-    /**
-     * Enviar email con HTML
-     */
+
+    // mail de bienvenida
     public function enviarBienvenida($toEmail, $nombreUsuario)
     {
-        $subject = "¡Bienvenido a Fragancias Prime!";
+        $subject = "Bienvenido a Fragancias Prime";
         
         $htmlBody = "
         <!DOCTYPE html>
         <html>
         <head>
             <style>
-                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-                .header { background: #2c3e50; color: white; padding: 20px; text-align: center; }
-                .content { padding: 30px; background: #f9f9f9; }
-                .button { display: inline-block; padding: 12px 30px; background: #3498db; color: white; text-decoration: none; border-radius: 5px; margin-top: 20px; }
-                .footer { text-align: center; padding: 20px; font-size: 12px; color: #777; }
+                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 20px; }
+                .container { max-width: 500px; margin: 0 auto; background: #fff; border: 1px solid #ddd; border-radius: 8px; }
+                .header { background: #000; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+                .content { padding: 30px; }
+                .footer { text-align: center; padding: 15px; font-size: 12px; color: #999; border-top: 1px solid #eee; }
             </style>
         </head>
         <body>
             <div class='container'>
                 <div class='header'>
-                    <h1>Fragancias Prime</h1>
+                    <h2 style='margin: 0;'>Fragancias Prime</h2>
                 </div>
                 <div class='content'>
-                    <h2>¡Hola, {$nombreUsuario}!</h2>
-                    <p>Te damos la bienvenida a <strong>Fragancias Prime</strong>, tu tienda de fragancias de confianza.</p>
-                    <p>Tu cuenta ha sido creada exitosamente y ya puedes comenzar a explorar nuestro catálogo de productos exclusivos.</p>
-                    <p>Disfruta de:</p>
-                    <ul>
-                        <li>Fragancias de las mejores marcas</li>
-                        <li>Proceso de compra rapido y seguro</li>
-                        <li>Seguimiento de tus pedidos</li>
-                        <li>Ofertas exclusivas</li>
-                    </ul>
-                    <a href='http://localhost/Fragancias%20Prime/public/?controller=auth&action=login' class='button'>Iniciar Sesión</a>
+                    <h3>Hola, {$nombreUsuario}!</h3>
+                    <p>Tu cuenta ha sido creada exitosamente.</p>
+                    <p>Ya puedes iniciar sesion y explorar nuestro catalogo de fragancias.</p>
                 </div>
                 <div class='footer'>
-                    <p>© 2025 Fragancias Prime. Todos los derechos reservados.</p>
-                    <p>Este es un email automatico, por favor no responder.</p>
+                    <p>© 2025 Fragancias Prime</p>
                 </div>
             </div>
         </body>
         </html>
         ";
 
-        $textBody = "Hola {$nombreUsuario},\n\nTe damos la bienvenida a Fragancias Prime.\n\nTu cuenta ha sido creada exitosamente.\n\nSaludos,\nEquipo Fragancias Prime";
+        $textBody = "Hola {$nombreUsuario},\n\nTu cuenta en Fragancias Prime ha sido creada exitosamente.\n\nSaludos,\nEquipo Fragancias Prime";
 
         return $this->enviar($toEmail, $subject, $htmlBody, $textBody);
     }
 
-    /**
-     * Enviar email genérico
-     */
+    
+    // Email de compra iniciada
+    public function enviarCompraIniciada($toEmail, $nombreUsuario, $idCompra, $total)
+    {
+        $subject = "Pedido #$idCompra recibido";
+        
+        $htmlBody = "
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 20px; }
+                .container { max-width: 500px; margin: 0 auto; background: #fff; border: 1px solid #ddd; border-radius: 8px; }
+                .header { background: #000; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+                .content { padding: 30px; }
+                .footer { text-align: center; padding: 15px; font-size: 12px; color: #999; border-top: 1px solid #eee; }
+            </style>
+        </head>
+        <body>
+            <div class='container'>
+                <div class='header'>
+                    <h2 style='margin: 0;'>Fragancias Prime</h2>
+                </div>
+                <div class='content'>
+                    <h3>¡Hola, {$nombreUsuario}!</h3>
+                    <p>Recibimos tu pedido <strong>#$idCompra</strong></p>
+                    <p>Total: <strong>\$$total</strong></p>
+                    <p>Te notificaremos cuando cambie el estado.</p>
+                </div>
+                <div class='footer'>
+                    <p>© 2025 Fragancias Prime</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        ";
+
+        $textBody = "Hola {$nombreUsuario},\n\nRecibimos tu pedido #{$idCompra}.\nTotal: \${$total}\n\nSaludos,\nEquipo Fragancias Prime";
+
+        return $this->enviar($toEmail, $subject, $htmlBody, $textBody);
+    }
+
+    // Email de compra aceptada
+    public function enviarCompraAceptada($toEmail, $nombreUsuario, $idCompra)
+    {
+        $subject = "Pedido #$idCompra aceptado";
+        
+        $htmlBody = "
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 20px; }
+                .container { max-width: 500px; margin: 0 auto; background: #fff; border: 1px solid #ddd; border-radius: 8px; }
+                .header { background: #28a745; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+                .content { padding: 30px; }
+                .footer { text-align: center; padding: 15px; font-size: 12px; color: #999; border-top: 1px solid #eee; }
+            </style>
+        </head>
+        <body>
+            <div class='container'>
+                <div class='header'>
+                    <h2 style='margin: 0;'>Fragancias Prime</h2>
+                </div>
+                <div class='content'>
+                    <h3>Hola, {$nombreUsuario}!</h3>
+                    <p>Tu pedido <strong>#$idCompra</strong> ha sido aceptado.</p>
+                    <p>Pronto estara en camino.</p>
+                </div>
+                <div class='footer'>
+                    <p>© 2025 Fragancias Prime</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        ";
+
+        $textBody = "Hola {$nombreUsuario},\n\nTu pedido #{$idCompra} ha sido aceptado.\n\nSaludos,\nEquipo Fragancias Prime";
+
+        return $this->enviar($toEmail, $subject, $htmlBody, $textBody);
+    }
+
+    // Email de compra enviada
+    public function enviarCompraEnviada($toEmail, $nombreUsuario, $idCompra)
+    {
+        $subject = "Pedido #$idCompra enviado";
+        
+        $htmlBody = "
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 20px; }
+                .container { max-width: 500px; margin: 0 auto; background: #fff; border: 1px solid #ddd; border-radius: 8px; }
+                .header { background: #007bff; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+                .content { padding: 30px; }
+                .footer { text-align: center; padding: 15px; font-size: 12px; color: #999; border-top: 1px solid #eee; }
+            </style>
+        </head>
+        <body>
+            <div class='container'>
+                <div class='header'>
+                    <h2 style='margin: 0;'>Fragancias Prime</h2>
+                </div>
+                <div class='content'>
+                    <h3>Hola, {$nombreUsuario}!</h3>
+                    <p>Tu pedido <strong>#$idCompra</strong> esta en camino.</p>
+                    <p>Gracias por tu compra!</p>
+                </div>
+                <div class='footer'>
+                    <p>© 2025 Fragancias Prime</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        ";
+
+        $textBody = "Hola {$nombreUsuario},\n\nTu pedido #{$idCompra} esta en camino.\n\nSaludos,\nEquipo Fragancias Prime";
+
+        return $this->enviar($toEmail, $subject, $htmlBody, $textBody);
+    }
+
+    // Email de compra cancelada
+    public function enviarCompraCancelada($toEmail, $nombreUsuario, $idCompra)
+    {
+        $subject = "Pedido #$idCompra cancelado";
+        
+        $htmlBody = "
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 20px; }
+                .container { max-width: 500px; margin: 0 auto; background: #fff; border: 1px solid #ddd; border-radius: 8px; }
+                .header { background: #dc3545; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+                .content { padding: 30px; }
+                .footer { text-align: center; padding: 15px; font-size: 12px; color: #999; border-top: 1px solid #eee; }
+            </style>
+        </head>
+        <body>
+            <div class='container'>
+                <div class='header'>
+                    <h2 style='margin: 0;'>Fragancias Prime</h2>
+                </div>
+                <div class='content'>
+                    <h3>Hola, {$nombreUsuario}!</h3>
+                    <p>Tu pedido <strong>#$idCompra</strong> ha sido cancelado.</p>
+                    <p>Si tenes consultas, contactanos.</p>
+                </div>
+                <div class='footer'>
+                    <p>© 2025 Fragancias Prime</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        ";
+
+        $textBody = "Hola {$nombreUsuario},\n\nTu pedido #{$idCompra} ha sido cancelado.\n\nSaludos,\nEquipo Fragancias Prime";
+
+        return $this->enviar($toEmail, $subject, $htmlBody, $textBody);
+    }
+
+    
+    // Enviar email
     public function enviar($toEmail, $subject, $htmlBody, $textBody = null)
     {
         try {

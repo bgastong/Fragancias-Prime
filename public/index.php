@@ -7,6 +7,9 @@ ini_set('display_errors', 1);
 define('ROOT_PATH', dirname(__DIR__));
 define('APP_PATH', ROOT_PATH . '/app');
 
+// Cargar autoload de Composer
+require_once ROOT_PATH . '/vendor/autoload.php';
+
 $controllerName = $_GET['controller'] ?? 'home';
 $actionName     = $_GET['action'] ?? 'index';
 

@@ -1,11 +1,13 @@
 <?php
-require_once __DIR__ . '/layouts/header-admin.php';
+$esVistaAdmin = true;
+$activeMenu = 'productos';
+require_once __DIR__ . '/../vista/layouts/header.php';
 ?>
 
 <div class="admin-content">
     <div class="container-fluid">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1>Gestión de Productos</h1>
+            <h1>Gestion de Productos</h1>
             <a href="?controller=producto&action=crear" class="btn btn-primary">
                 <i class="bi bi-plus-circle me-2"></i>Nuevo Producto
             </a>
@@ -30,7 +32,7 @@ require_once __DIR__ . '/layouts/header-admin.php';
         <?php if (empty($productos)): ?>
             <div class="alert alert-info">
                 <i class="bi bi-info-circle me-2"></i>
-                No hay productos registrados. Crea el primero usando el botón "Nuevo Producto".
+                No hay productos registrados. Crea el primero usando el boton "Nuevo Producto".
             </div>
         <?php else: ?>
             <div class="card">
@@ -55,9 +57,9 @@ require_once __DIR__ . '/layouts/header-admin.php';
                                         <td><?= $producto['idproducto'] ?></td>
                                         <td>
                                             <?php if (!empty($producto['imagen'])): ?>
-                                                <img src="/Fragancias Prime/public/upload/productos/<?= htmlspecialchars($producto['imagen']) ?>" 
-                                                     alt="Producto" 
-                                                     style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
+                                                <img src="/Fragancias Prime/public/upload/productos/<?= htmlspecialchars($producto['imagen']) ?>"
+                                                    alt="Producto"
+                                                    style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
                                             <?php else: ?>
                                                 <div style="width: 50px; height: 50px; background: #ddd; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
                                                     <i class="bi bi-image text-muted"></i>
@@ -81,15 +83,15 @@ require_once __DIR__ . '/layouts/header-admin.php';
                                         <td><?= $producto['orden'] ?? '-' ?></td>
                                         <td>
                                             <div class="btn-group" role="group">
-                                                <a href="?controller=producto&action=editar&id=<?= $producto['idproducto'] ?>" 
-                                                   class="btn btn-sm btn-outline-primary" 
-                                                   title="Editar">
+                                                <a href="?controller=producto&action=editar&id=<?= $producto['idproducto'] ?>"
+                                                    class="btn btn-sm btn-outline-primary"
+                                                    title="Editar">
                                                     <i class="bi bi-pencil"></i>
                                                 </a>
-                                                <a href="?controller=producto&action=eliminar&id=<?= $producto['idproducto'] ?>" 
-                                                   class="btn btn-sm btn-outline-danger" 
-                                                   title="Eliminar"
-                                                   onclick="return confirm('¿Estás seguro de eliminar este producto? Esta acción no se puede deshacer.')">
+                                                <a href="?controller=producto&action=eliminar&id=<?= $producto['idproducto'] ?>"
+                                                    class="btn btn-sm btn-outline-danger"
+                                                    title="Eliminar"
+                                                    onclick="return confirm('Estas seguro de eliminar este producto? Esta accion no se puede deshacer.')">
                                                     <i class="bi bi-trash"></i>
                                                 </a>
                                             </div>
@@ -106,5 +108,5 @@ require_once __DIR__ . '/layouts/header-admin.php';
 </div>
 
 <?php
-require_once __DIR__ . '/layouts/footer-admin.php';
+require_once __DIR__ . '/../vista/layouts/footer.php';
 ?>

@@ -17,11 +17,13 @@ class Pedido
     {
         $sql = "SELECT c.idcompra, c.cofecha, 
                     ce.idcompraestadotipo, cet.cetdescripcion as estado,
-                    0 as total
+                    COALESCE(SUM(ci.cicantidad * sh.precio), 0) as total
                 FROM compra c
                 LEFT JOIN compraestado ce ON c.idcompra = ce.idcompra 
                     AND ce.cefechafin IS NULL
                 LEFT JOIN compraestadotipo cet ON ce.idcompraestadotipo = cet.idcompraestadotipo
+                LEFT JOIN compraitem ci ON c.idcompra = ci.idcompra
+                LEFT JOIN slider_home sh ON ci.idproducto = sh.producto_id
                 WHERE c.idusuario = :usuarioId
                 GROUP BY c.idcompra, c.cofecha, ce.idcompraestadotipo, cet.cetdescripcion
                 ORDER BY c.cofecha DESC";
@@ -37,12 +39,14 @@ class Pedido
     {
         $sql = "SELECT c.idcompra, c.cofecha, u.usnombre, u.usmail,
                     ce.idcompraestadotipo, cet.cetdescripcion as estado,
-                    0 as total
+                    COALESCE(SUM(ci.cicantidad * sh.precio), 0) as total
                 FROM compra c
                 INNER JOIN usuario u ON c.idusuario = u.idusuario
                 LEFT JOIN compraestado ce ON c.idcompra = ce.idcompra 
                     AND ce.cefechafin IS NULL
                 LEFT JOIN compraestadotipo cet ON ce.idcompraestadotipo = cet.idcompraestadotipo
+                LEFT JOIN compraitem ci ON c.idcompra = ci.idcompra
+                LEFT JOIN slider_home sh ON ci.idproducto = sh.producto_id
                 WHERE ce.idcompraestadotipo IN (1, 2)
                 GROUP BY c.idcompra, c.cofecha, u.usnombre, u.usmail, ce.idcompraestadotipo, cet.cetdescripcion
                 ORDER BY c.cofecha DESC";
@@ -51,17 +55,21 @@ class Pedido
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-        // Obtener un pedido por su ID
+    // Obtener un pedido por su ID
     public function obtenerPorId($idCompra)
     {
         $sql = "SELECT c.*, u.usnombre, u.usmail,
-                    ce.idcompraestadotipo, cet.cetdescripcion as estado
+                    ce.idcompraestadotipo, cet.cetdescripcion as estado,
+                    COALESCE(SUM(ci.cicantidad * sh.precio), 0) as total
                 FROM compra c
                 INNER JOIN usuario u ON c.idusuario = u.idusuario
                 LEFT JOIN compraestado ce ON c.idcompra = ce.idcompra 
                     AND ce.cefechafin IS NULL
                 LEFT JOIN compraestadotipo cet ON ce.idcompraestadotipo = cet.idcompraestadotipo
-                WHERE c.idcompra = :idCompra";
+                LEFT JOIN compraitem ci ON c.idcompra = ci.idcompra
+                LEFT JOIN slider_home sh ON ci.idproducto = sh.producto_id
+                WHERE c.idcompra = :idCompra
+                GROUP BY c.idcompra, c.idusuario, c.cofecha, u.usnombre, u.usmail, ce.idcompraestadotipo, cet.cetdescripcion";
 
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':idCompra', $idCompra, PDO::PARAM_INT);
@@ -159,6 +167,142 @@ class Pedido
         } catch (Exception $e) {
             $this->db->rollBack();
             throw $e;
+        }
+    }
+
+    // Crear pedido completo con validaciones y email
+    public function crearPedidoCompleto($usuarioId, $items, $usuarioModel, $mailService)
+    {
+        try {
+            // Crear el pedido
+            $idCompra = $this->crear($usuarioId, $items);
+            
+            // Obtener datos del pedido para el email
+            $pedido = $this->obtenerPorId($idCompra);
+            $total = $pedido['total'] ?? 0;
+            
+            // Obtener datos del usuario
+            $usuario = $usuarioModel->buscarId($usuarioId);
+            
+            // Enviar email si tiene email configurado
+            if ($usuario && !empty($usuario['usmail'])) {
+                $mailService->enviarCompraIniciada(
+                    $usuario['usmail'],
+                    $usuario['usnombre'],
+                    $idCompra,
+                    $total
+                );
+            }
+            
+            return ['exito' => true, 'idCompra' => $idCompra];
+        } catch (Exception $e) {
+            return ['exito' => false, 'mensaje' => $e->getMessage()];
+        }
+    }
+
+    // Aceptar pedido (descuenta stock y envia email)
+    public function aceptarPedido($idCompra, $productoModel, $usuarioModel, $mailService)
+    {
+        try {
+            $this->db->beginTransaction();
+            
+            // Obtener items del pedido
+            $items = $this->obtenerItems($idCompra);
+            
+            // Descontar stock de cada producto
+            foreach ($items as $item) {
+                $stockDescontado = $productoModel->descontarStock($item['idproducto'], $item['cicantidad']);
+                if (!$stockDescontado) {
+                    throw new Exception("Stock insuficiente para el producto ID: " . $item['idproducto']);
+                }
+            }
+            
+            // Cambiar estado a "aceptada" (2)
+            $this->actualizarEstado($idCompra, 2);
+            
+            $this->db->commit();
+            
+            // Enviar email al cliente
+            $pedido = $this->obtenerPorId($idCompra);
+            $usuario = $usuarioModel->buscarId($pedido['idusuario']);
+            
+            if ($usuario && !empty($usuario['usmail'])) {
+                $mailService->enviarCompraAceptada(
+                    $usuario['usmail'],
+                    $usuario['usnombre'],
+                    $idCompra
+                );
+            }
+            
+            return ['exito' => true];
+        } catch (Exception $e) {
+            $this->db->rollBack();
+            return ['exito' => false, 'mensaje' => $e->getMessage()];
+        }
+    }
+
+    // Enviar pedido (actualiza estado y envia email)
+    public function enviarPedido($idCompra, $usuarioModel, $mailService)
+    {
+        try {
+            // Cambiar estado a "enviada" (3)
+            $this->actualizarEstado($idCompra, 3);
+            
+            // Enviar email al cliente
+            $pedido = $this->obtenerPorId($idCompra);
+            $usuario = $usuarioModel->buscarId($pedido['idusuario']);
+            
+            if ($usuario && !empty($usuario['usmail'])) {
+                $mailService->enviarCompraEnviada(
+                    $usuario['usmail'],
+                    $usuario['usnombre'],
+                    $idCompra
+                );
+            }
+            
+            return ['exito' => true];
+        } catch (Exception $e) {
+            return ['exito' => false, 'mensaje' => $e->getMessage()];
+        }
+    }
+
+    // Cancelar pedido (restaura stock si fue aceptado y envia email)
+    public function cancelarPedido($idCompra, $productoModel, $usuarioModel, $mailService)
+    {
+        try {
+            $this->db->beginTransaction(); 
+            
+            $pedido = $this->obtenerPorId($idCompra);
+            
+            // Si el pedido ya fue aceptado (estado >= 2), restaurar el stock
+            if ($pedido['idcompraestadotipo'] >= 2) {
+                $items = $this->obtenerItems($idCompra);
+                
+                foreach ($items as $item) {
+                    $productoModel->restaurarStock($item['idproducto'], $item['cicantidad']);
+                }
+            }
+            
+            // Cambiar estado a "cancelada" (4)
+            $this->actualizarEstado($idCompra, 4);
+            
+            $this->db->commit(); // Confirmo 
+            
+            // Enviar email al cliente
+            $usuario = $usuarioModel->buscarId($pedido['idusuario']);
+            
+            if ($usuario && !empty($usuario['usmail'])) {
+                $mailService->enviarCompraCancelada(
+                    $usuario['usmail'],
+                    $usuario['usnombre'],
+                    $idCompra
+                );
+            }
+            
+            return ['exito' => true, 'stockRestaurado' => $pedido['idcompraestadotipo'] >= 2];
+        } catch (Exception $e) {
+            $this->db->rollBack();
+            return ['exito' => false, 'mensaje' => $e->getMessage()];
         }
     }
 }

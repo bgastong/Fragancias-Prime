@@ -3,7 +3,7 @@
 <div class="container d-flex justify-content-center align-items-center" style="min-height: 70vh;">
     <div class="card shadow p-4" style="max-width: 420px; width: 100%;">
 
-        <h3 class="text-center mb-4 fw-bold">Iniciar Sesión</h3>
+        <h3 class="text-center mb-4 fw-bold">Iniciar Sesion</h3>
 
         <?php if (!empty($error)): ?>
             <div class="alert alert-danger text-center">
@@ -25,9 +25,9 @@
                 >
             </div>
 
-            <!-- Contraseña -->
+            <!-- Contrasena -->
             <div class="mb-3">
-                <label class="form-label">Contraseña</label>
+                <label class="form-label">Contrasena</label>
                 <input 
                     type="password"
                     name="clave"
@@ -50,7 +50,7 @@
                 </label>
             </div>
 
-            <!-- Botón -->
+            <!-- Boton -->
             <button type="submit" class="btn btn-dark w-100 mb-3">
                 Ingresar
             </button>

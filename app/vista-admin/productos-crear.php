@@ -1,5 +1,7 @@
 <?php
-require_once __DIR__ . '/layouts/header-admin.php';
+$esVistaAdmin = true;
+$activeMenu = 'productos';
+require_once __DIR__ . '/../vista/layouts/header.php';
 ?>
 
 <div class="admin-content">
@@ -22,12 +24,14 @@ require_once __DIR__ . '/layouts/header-admin.php';
         <div class="card">
             <div class="card-body">
                 <form method="POST" action="?controller=producto&action=crear" enctype="multipart/form-data">
-                    
+
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="pronombre" class="form-label">Nombre del Producto <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="pronombre" name="pronombre" required>
+                                <label for="prodetalle" class="form-label">Nombre del Producto <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="prodetalle" name="prodetalle"
+                                    placeholder="Ej: Perfume Azzaro Chrome" required>
+                                <small class="text-muted">Este sera el nombre visible del producto</small>
                             </div>
                         </div>
 
@@ -47,15 +51,17 @@ require_once __DIR__ . '/layouts/header-admin.php';
                     </div>
 
                     <div class="mb-3">
-                        <label for="prodetalle" class="form-label">Detalle/Descripción <span class="text-danger">*</span></label>
-                        <textarea class="form-control" id="prodetalle" name="prodetalle" rows="4" required></textarea>
+                        <label for="descripcion" class="form-label">Descripcion del Producto</label>
+                        <textarea class="form-control" id="descripcion" name="descripcion" rows="4" 
+                            placeholder="Descripcion detallada del producto"></textarea>
                     </div>
 
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="subtitulo" class="form-label">Subtítulo (para slider)</label>
-                                <input type="text" class="form-control" id="subtitulo" name="subtitulo">
+                                <label for="subtitulo" class="form-label">Subtitulo (opcional)</label>
+                                <input type="text" class="form-control" id="subtitulo" name="subtitulo"
+                                    placeholder="Texto secundario para el slider">
                             </div>
                         </div>
 
@@ -68,14 +74,9 @@ require_once __DIR__ . '/layouts/header-admin.php';
                     </div>
 
                     <div class="mb-3">
-                        <label for="descripcion" class="form-label">Descripción Extendida (para slider)</label>
-                        <textarea class="form-control" id="descripcion" name="descripcion" rows="3"></textarea>
-                    </div>
-
-                    <div class="mb-3">
                         <label for="imagen" class="form-label">Imagen del Producto</label>
                         <input type="file" class="form-control" id="imagen" name="imagen" accept="image/*">
-                        <small class="text-muted">Formatos aceptados: JPG, PNG, WEBP. Tamaño máximo: 5MB</small>
+                        <small class="text-muted">Formatos aceptados: JPG, PNG, WEBP. Tamano maximo: 5MB</small>
                     </div>
 
                     <div class="d-flex justify-content-end gap-2">
@@ -91,5 +92,5 @@ require_once __DIR__ . '/layouts/header-admin.php';
 </div>
 
 <?php
-require_once __DIR__ . '/layouts/footer-admin.php';
+require_once __DIR__ . '/../vista/layouts/footer.php';
 ?>

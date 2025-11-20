@@ -56,7 +56,7 @@ require_once __DIR__ . '/layouts/header.php';
                                 <thead>
                                     <tr>
                                         <th>Producto</th>
-                                        <th>Descripción</th>
+                                        <th>Descripcion</th>
                                         <th class="text-center">Cantidad</th>
                                     </tr>
                                 </thead>
@@ -86,37 +86,36 @@ require_once __DIR__ . '/layouts/header.php';
                     <?php
                     $usuarioId = AuthMiddleware::usuarioId();
                     $esAdmin = RoleMiddleware::esAdmin();
-                    $esDeposito = RoleMiddleware::esDeposito();
                     $esDueno = $pedido['idusuario'] == $usuarioId;
                     ?>
 
-                    <?php if (($esAdmin || $esDeposito) && $estadoId == 1): ?>
+                    <?php if ($esAdmin && $estadoId == 1): ?>
                         <a href="?controller=pedido&action=aceptar&id=<?= $pedido['idcompra'] ?>"
                             class="btn btn-success w-100 mb-2"
-                            onclick="return confirm('¿Aceptar este pedido?')">
+                            onclick="return confirm('Aceptar este pedido?')">
                             <i class="bi bi-check-circle me-2"></i>Aceptar Pedido
                         </a>
                     <?php endif; ?>
 
-                    <?php if (($esAdmin || $esDeposito) && $estadoId == 2): ?>
+                    <?php if ($esAdmin && $estadoId == 2): ?>
                         <a href="?controller=pedido&action=enviar&id=<?= $pedido['idcompra'] ?>"
                             class="btn btn-primary w-100 mb-2"
-                            onclick="return confirm('¿Marcar como enviado?')">
+                            onclick="return confirm('Marcar como enviado?')">
                             <i class="bi bi-truck me-2"></i>Marcar Enviado
                         </a>
                     <?php endif; ?>
 
                     <?php if ($estadoId != 4): ?>
-                        <?php if ($esAdmin || $esDeposito || ($esDueno && $estadoId == 1)): ?>
+                        <?php if ($esAdmin || ($esDueno && $estadoId == 1)): ?>
                             <a href="?controller=pedido&action=cancelar&id=<?= $pedido['idcompra'] ?>"
                                 class="btn btn-danger w-100 mb-2"
-                                onclick="return confirm('¿Estás seguro de cancelar este pedido?')">
+                                onclick="return confirm('Estas seguro de cancelar este pedido?')">
                                 <i class="bi bi-x-circle me-2"></i>Cancelar Pedido
                             </a>
                         <?php endif; ?>
                     <?php endif; ?>
 
-                    <?php if ($esAdmin || $esDeposito): ?>
+                    <?php if ($esAdmin): ?>
                         <a href="?controller=pedido&action=pendientes" class="btn btn-outline-secondary w-100">
                             <i class="bi bi-arrow-left me-2"></i>Volver a Pendientes
                         </a>

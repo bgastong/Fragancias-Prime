@@ -3,6 +3,8 @@
 require_once __DIR__ . '/../middleware/AuthMiddleware.php';
 require_once __DIR__ . '/../middleware/RoleMiddleware.php';
 require_once __DIR__ . '/../model/Pedido.php';
+require_once __DIR__ . '/../model/Usuario.php';
+require_once __DIR__ . '/../model/MailService.php';
 
 class PedidoController
 {
@@ -22,13 +24,9 @@ class PedidoController
 
     public function pendientes()
     {
-        // Requiere rol de depósito o admin
+        // Solo admin puede ver pedidos pendientes
         AuthMiddleware::requiereAutenticacion();
-        
-        if (!RoleMiddleware::esDeposito() && !RoleMiddleware::esAdmin()) {
-            header("Location: ?controller=home&action=accesoDenegado");
-            exit;
-        }
+        RoleMiddleware::requiereAdmin();
 
         $pedidoModel = new Pedido();
         $pedidos = $pedidoModel->obtenerPendientes();
@@ -52,11 +50,9 @@ class PedidoController
             die("Pedido no encontrado");
         }
 
-        // Verificar que el usuario sea dueño del pedido o sea admin/deposito
+        // Verificar que el usuario sea dueno del pedido o sea admin
         $usuarioId = AuthMiddleware::usuarioId();
-        if ($pedido['idusuario'] != $usuarioId && 
-            !RoleMiddleware::esAdmin() && 
-            !RoleMiddleware::esDeposito()) {
+        if ($pedido['idusuario'] != $usuarioId && !RoleMiddleware::esAdmin()) {
             header("Location: ?controller=home&action=accesoDenegado");
             exit;
         }
@@ -68,13 +64,8 @@ class PedidoController
 
     public function aceptar()
     {
-        // Solo admin o depósito pueden aceptar pedidos
         AuthMiddleware::requiereAutenticacion();
-        
-        if (!RoleMiddleware::esAdmin() && !RoleMiddleware::esDeposito()) {
-            header("Location: ?controller=home&action=accesoDenegado");
-            exit;
-        }
+        RoleMiddleware::requiereAdmin();
 
         $idCompra = $_GET['id'] ?? null;
         if (!$idCompra) {
@@ -82,13 +73,16 @@ class PedidoController
         }
 
         $pedidoModel = new Pedido();
+        $productoModel = new Producto();
+        $usuarioModel = new Usuario();
+        $mailService = new MailService();
         
-        try {
-            // Cambiar estado a "aceptada" (2)
-            $pedidoModel->actualizarEstado($idCompra, 2);
-            $_SESSION['mensaje_exito'] = "Pedido #$idCompra aceptado exitosamente";
-        } catch (Exception $e) {
-            $_SESSION['mensaje_error'] = "Error al aceptar pedido: " . $e->getMessage();
+        $resultado = $pedidoModel->aceptarPedido($idCompra, $productoModel, $usuarioModel, $mailService);
+        
+        if ($resultado['exito']) {
+            $_SESSION['mensaje_exito'] = "Pedido #$idCompra aceptado y stock descontado exitosamente";
+        } else {
+            $_SESSION['mensaje_error'] = "Error al aceptar pedido: {$resultado['mensaje']}";
         }
 
         header("Location: ?controller=pedido&action=pendientes");
@@ -97,13 +91,8 @@ class PedidoController
 
     public function enviar()
     {
-        //solo admin o deposito
         AuthMiddleware::requiereAutenticacion();
-        
-        if (!RoleMiddleware::esAdmin() && !RoleMiddleware::esDeposito()) {
-            header("Location: ?controller=home&action=accesoDenegado");
-            exit;
-        }
+        RoleMiddleware::requiereAdmin();
 
         $idCompra = $_GET['id'] ?? null;
         if (!$idCompra) {
@@ -111,13 +100,15 @@ class PedidoController
         }
 
         $pedidoModel = new Pedido();
+        $usuarioModel = new Usuario();
+        $mailService = new MailService();
         
-        try {
-            //enviado (3)
-            $pedidoModel->actualizarEstado($idCompra, 3);
+        $resultado = $pedidoModel->enviarPedido($idCompra, $usuarioModel, $mailService);
+        
+        if ($resultado['exito']) {
             $_SESSION['mensaje_exito'] = "Pedido #$idCompra marcado como enviado";
-        } catch (Exception $e) {
-            $_SESSION['mensaje_error'] = "Error al enviar pedido: " . $e->getMessage();
+        } else {
+            $_SESSION['mensaje_error'] = "Error al enviar pedido: {$resultado['mensaje']}";
         }
 
         header("Location: ?controller=pedido&action=pendientes");
@@ -140,28 +131,35 @@ class PedidoController
             die("Pedido no encontrado");
         }
 
-        // Admin puede cancelar cualquier pedido
-        // Cliente solo puede cancelar sus propios pedidos en estado "iniciada" (1)
+        // Verificar permisos
         $usuarioId = AuthMiddleware::usuarioId();
         $esAdmin = RoleMiddleware::esAdmin();
-        $esDeposito = RoleMiddleware::esDeposito();
         $esDueno = $pedido['idusuario'] == $usuarioId;
 
-        if (!$esAdmin && !$esDeposito && (!$esDueno || $pedido['idcompraestadotipo'] != 1)) {
+        if (!$esAdmin && (!$esDueno || $pedido['idcompraestadotipo'] != 1)) {
             $_SESSION['mensaje_error'] = "No tienes permiso para cancelar este pedido";
             header("Location: ?controller=pedido&action=misPedidos");
             exit;
         }
 
-        try {
-            // Cambiar estado a "cancelada" (4)
-            $pedidoModel->actualizarEstado($idCompra, 4);
-            $_SESSION['mensaje_exito'] = "Pedido #$idCompra cancelado";
-        } catch (Exception $e) {
-            $_SESSION['mensaje_error'] = "Error al cancelar pedido: " . $e->getMessage();
+        // Cancelar pedido
+        $productoModel = new Producto();
+        $usuarioModel = new Usuario();
+        $mailService = new MailService();
+        
+        $resultado = $pedidoModel->cancelarPedido($idCompra, $productoModel, $usuarioModel, $mailService);
+        
+        if ($resultado['exito']) {
+            $mensaje = "Pedido #$idCompra cancelado";
+            if ($resultado['stockRestaurado']) {
+                $mensaje .= " y stock restaurado";
+            }
+            $_SESSION['mensaje_exito'] = $mensaje;
+        } else {
+            $_SESSION['mensaje_error'] = "Error al cancelar pedido: {$resultado['mensaje']}";
         }
 
-        if ($esAdmin || $esDeposito) {
+        if ($esAdmin) {
             header("Location: ?controller=pedido&action=pendientes");
         } else {
             header("Location: ?controller=pedido&action=misPedidos");

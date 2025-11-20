@@ -24,7 +24,7 @@ require_once __DIR__ . '/layouts/header.php';
     <?php if (empty($pedidos)): ?>
         <div class="alert alert-info">
             <i class="bi bi-info-circle me-2"></i>
-            Aún no has realizado ningún pedido.
+            Aun no has realizado ningun pedido.
         </div>
         <a href="?controller=home&action=index" class="btn btn-primary">
             <i class="bi bi-shop me-2"></i>Ir a la tienda
@@ -71,7 +71,7 @@ require_once __DIR__ . '/layouts/header.php';
                                 <?php if ($pedido['idcompraestadotipo'] == 1): ?>
                                     <a href="?controller=pedido&action=cancelar&id=<?= $pedido['idcompra'] ?>" 
                                        class="btn btn-sm btn-outline-danger"
-                                       onclick="return confirm('¿Cancelar este pedido?')">
+                                       onclick="return confirm('Cancelar este pedido?')">
                                         <i class="bi bi-x-circle me-1"></i>Cancelar
                                     </a>
                                 <?php endif; ?>

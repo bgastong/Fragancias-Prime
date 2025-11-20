@@ -1,5 +1,7 @@
 <?php
-require_once __DIR__ . '/layouts/header-admin.php';
+$esVistaAdmin = true;
+$activeMenu = 'usuarios';
+require_once __DIR__ . '/../vista/layouts/header.php';
 
 // Obtener todos los roles disponibles
 $database = new Database();
@@ -35,7 +37,7 @@ $rolActual = !empty($rolesUsuario) ? $rolesUsuario[0]['idrol'] : null;
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="mb-0">Información del Usuario</h5>
+                        <h5 class="mb-0">Informacion del Usuario</h5>
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
@@ -96,5 +98,5 @@ $rolActual = !empty($rolesUsuario) ? $rolesUsuario[0]['idrol'] : null;
 </div>
 
 <?php
-require_once __DIR__ . '/layouts/footer-admin.php';
+require_once __DIR__ . '/../vista/layouts/footer.php';
 ?>

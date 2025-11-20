@@ -14,9 +14,4 @@ class AdminController
     {
         require_once __DIR__ . '/../vista-admin/dashboard.php';
     }
-
-    public function reportes()
-    {
-        echo "Pagina de reportes en construcción";
-    }
 }

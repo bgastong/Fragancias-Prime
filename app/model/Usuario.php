@@ -55,7 +55,7 @@ class Usuario {
     {
         $usuario = $this->buscarNombre($nombre);
 
-        // No existe usuario o está deshabilitado
+        // No existe usuario o esta deshabilitado
         if (!$usuario || !is_null($usuario['usdeshabilitado'])) {
             return null;
         }
@@ -180,5 +180,89 @@ class Usuario {
         $consulta = $this->db->prepare($sql);
         $consulta->bindValue(':idusuario', $idusuario, PDO::PARAM_INT);
         return $consulta->execute();
+    }
+
+    public function actualizarContrasena($idusuario, $nuevaContrasena)
+    {
+        $passHash = password_hash($nuevaContrasena, PASSWORD_DEFAULT);
+        $sql = "UPDATE usuario SET uspass = :pass WHERE idusuario = :idusuario";
+        $consulta = $this->db->prepare($sql);
+        $consulta->bindValue(':pass', $passHash, PDO::PARAM_STR);
+        $consulta->bindValue(':idusuario', $idusuario, PDO::PARAM_INT);
+        return $consulta->execute();
+    }
+
+    public function actualizarEmail($idusuario, $nuevoEmail)
+    {
+        $sql = "UPDATE usuario SET usmail = :email WHERE idusuario = :idusuario";
+        $consulta = $this->db->prepare($sql);
+        $consulta->bindValue(':email', $nuevoEmail, PDO::PARAM_STR);
+        $consulta->bindValue(':idusuario', $idusuario, PDO::PARAM_INT);
+        return $consulta->execute();
+    }
+
+    // Cambiar contrasena con validaciones
+    public function cambiarContrasenaConValidacion($idusuario, $passActual, $passNueva, $passConfirmar)
+    {
+        // Validaciones
+        if (empty($passActual) || empty($passNueva) || empty($passConfirmar)) {
+            return ['exito' => false, 'mensaje' => 'Todos los campos son obligatorios'];
+        }
+
+        if ($passNueva !== $passConfirmar) {
+            return ['exito' => false, 'mensaje' => 'Las contrasenas nuevas no coinciden'];
+        }
+
+        if (strlen($passNueva) < 4) {
+            return ['exito' => false, 'mensaje' => 'La contrasena debe tener al menos 4 caracteres'];
+        }
+
+        // Verificar contrasena actual
+        $usuario = $this->buscarId($idusuario);
+        
+        if (!$usuario || !password_verify($passActual, $usuario['uspass'])) {
+            return ['exito' => false, 'mensaje' => 'La contrasena actual es incorrecta'];
+        }
+
+        // Actualizar contrasena
+        if ($this->actualizarContrasena($idusuario, $passNueva)) {
+            return ['exito' => true];
+        }
+
+        return ['exito' => false, 'mensaje' => 'Error al actualizar la contrasena'];
+    }
+
+    // Cambiar email con validaciones
+    public function cambiarEmailConValidacion($idusuario, $emailNuevo, $password)
+    {
+        // Validaciones
+        if (empty($emailNuevo) || empty($password)) {
+            return ['exito' => false, 'mensaje' => 'Todos los campos son obligatorios'];
+        }
+
+        if (!filter_var($emailNuevo, FILTER_VALIDATE_EMAIL)) {
+            return ['exito' => false, 'mensaje' => 'El email no es valido'];
+        }
+
+        // Verificar contrasena
+        $usuario = $this->buscarId($idusuario);
+        
+        if (!$usuario || !password_verify($password, $usuario['uspass'])) {
+            return ['exito' => false, 'mensaje' => 'La contrasena es incorrecta'];
+        }
+
+        // Verificar que el email no este en uso
+        $emailExiste = $this->buscarEmail($emailNuevo);
+        
+        if ($emailExiste && $emailExiste['idusuario'] != $idusuario) {
+            return ['exito' => false, 'mensaje' => 'Este email ya esta en uso'];
+        }
+
+        // Actualizar email
+        if ($this->actualizarEmail($idusuario, $emailNuevo)) {
+            return ['exito' => true];
+        }
+
+        return ['exito' => false, 'mensaje' => 'Error al actualizar el email'];
     }
 }

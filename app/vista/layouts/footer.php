@@ -1,6 +1,11 @@
     </main>
-<link rel="stylesheet" href="/public/css/style.css">
-    <!-- FOOTER -->
+    
+<?php if (isset($esVistaAdmin) && $esVistaAdmin === true): ?>
+    <!-- Footer para admin (cierra row y container-fluid del sidebar) -->
+        </div>
+    </div>
+<?php else: ?>
+    <!-- Footer para cliente -->
     <footer class="bg-white text-dark text-center py-3 mt-5">
         <div class="container">
 
@@ -21,6 +26,7 @@
             </p>
         </div>
     </footer>
+<?php endif; ?>
 
     <script
         src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"

@@ -18,19 +18,31 @@
             <?php
             $total = 0;
             foreach ($productos as $p):
-                $subtotal = $p['proprecio'] * $p['cantidad'];
+                $precio = $p['precio'] ?? 0;
+                $subtotal = $precio * $p['cantidad'];
                 $total += $subtotal;
             ?>
 
                 <div class="carrito-item">
 
                     <div class="item-img">
-                        <img src="/public/img/productos/<?php echo $p['idproducto']; ?>.webp" alt="">
+                        <?php
+                        // Construir ruta de imagen
+                        $rutaImagen = '';
+                        if (!empty($p['imagen'])) {
+                            $rutaImagen = '/Fragancias Prime/public/upload/productos/' . $p['imagen'];
+                        } elseif (!empty($p['pronombre'])) {
+                            $rutaImagen = $p['pronombre'];
+                        }
+                        ?>
+                        <img src="<?= htmlspecialchars($rutaImagen) ?>"
+                            alt="<?= htmlspecialchars($p['prodetalle']) ?>"
+                            onerror="this.src='/Fragancias Prime/public/img/no-image.png'">
                     </div>
 
                     <div class="item-info">
-                        <h2><?php echo htmlspecialchars($p['pronombre']); ?></h2>
-                        <p><?php echo htmlspecialchars($p['prodetalle']); ?></p>
+                        <h2><?php echo htmlspecialchars($p['prodetalle']); ?></h2>
+                        <p class="precio-unitario">Precio: $<?php echo number_format($precio, 2, ',', '.'); ?></p>
 
                         <div class="item-cantidad">
                             <span>Cantidad: <?php echo $p['cantidad']; ?></span>
@@ -39,7 +51,10 @@
 
                     <div class="item-precio">
                         <span>$<?php echo number_format($subtotal, 2, ',', '.'); ?></span>
-                        <a href="/carrito/quitar/<?php echo $p['idproducto']; ?>" class="btn-quitar">Quitar</a>
+                        <form method="POST" action="?controller=carrito&action=quitar" style="margin-top: 0.5rem;">
+                            <input type="hidden" name="idproducto" value="<?php echo $p['idproducto']; ?>">
+                            <button type="submit" class="btn-quitar">Quitar</button>
+                        </form>
                     </div>
 
                 </div>
@@ -55,7 +70,7 @@
 
         <div class="carrito-acciones">
             <a href="?controller=carrito&action=vaciar" class="btn-vaciar"
-                onclick="return confirm('¿Estás seguro de vaciar el carrito?')">
+                onclick="return confirm('Estas seguro de vaciar el carrito?')">
                 Vaciar carrito
             </a>
             <a href="?controller=carrito&action=finalizarCompra" class="btn-finalizar">

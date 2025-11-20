@@ -1,5 +1,7 @@
 <?php
-require_once __DIR__ . '/layouts/header-admin.php';
+$esVistaAdmin = true;
+$activeMenu = 'productos';
+require_once __DIR__ . '/../vista/layouts/header.php';
 ?>
 
 <div class="admin-content">
@@ -26,9 +28,11 @@ require_once __DIR__ . '/layouts/header-admin.php';
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="pronombre" class="form-label">Nombre del Producto <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="pronombre" name="pronombre"
-                                    value="<?= htmlspecialchars($producto['pronombre']) ?>" required>
+                                <label for="prodetalle" class="form-label">Nombre del Producto <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="prodetalle" name="prodetalle"
+                                    value="<?= htmlspecialchars($producto['prodetalle']) ?>" required
+                                    placeholder="Ej: Perfume Azzaro Chrome">
+                                <small class="form-text text-muted">Este sera el nombre visible del producto</small>
                             </div>
                         </div>
 
@@ -50,14 +54,15 @@ require_once __DIR__ . '/layouts/header-admin.php';
                     </div>
 
                     <div class="mb-3">
-                        <label for="prodetalle" class="form-label">Detalle/Descripción <span class="text-danger">*</span></label>
-                        <textarea class="form-control" id="prodetalle" name="prodetalle" rows="4" required><?= htmlspecialchars($producto['prodetalle']) ?></textarea>
+                        <label for="descripcion" class="form-label">Descripcion Larga</label>
+                        <textarea class="form-control" id="descripcion" name="descripcion" rows="4" placeholder="Descripcion detallada del producto (opcional)"><?= htmlspecialchars($producto['descripcion'] ?? '') ?></textarea>
+                        <small class="form-text text-muted">Descripcion completa que se muestra en la pagina de detalle</small>
                     </div>
 
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="subtitulo" class="form-label">Subtítulo (para slider)</label>
+                                <label for="subtitulo" class="form-label">Subtitulo (para slider)</label>
                                 <input type="text" class="form-control" id="subtitulo" name="subtitulo"
                                     value="<?= htmlspecialchars($producto['subtitulo'] ?? '') ?>">
                             </div>
@@ -70,11 +75,6 @@ require_once __DIR__ . '/layouts/header-admin.php';
                                     value="<?= $producto['orden'] ?? 0 ?>" min="0">
                             </div>
                         </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="descripcion" class="form-label">Descripción Extendida (para slider)</label>
-                        <textarea class="form-control" id="descripcion" name="descripcion" rows="3"><?= htmlspecialchars($producto['descripcion'] ?? '') ?></textarea>
                     </div>
 
                     <div class="mb-3">
@@ -91,8 +91,8 @@ require_once __DIR__ . '/layouts/header-admin.php';
 
                         <input type="file" class="form-control" id="imagen" name="imagen" accept="image/*">
                         <small class="text-muted">
-                            <?= !empty($producto['imagen']) ? 'Deja vacío para mantener la imagen actual. ' : '' ?>
-                            Formatos aceptados: JPG, PNG, WEBP. Tamaño máximo: 5MB
+                            <?= !empty($producto['imagen']) ? 'Deja vacio para mantener la imagen actual. ' : '' ?>
+                            Formatos aceptados: JPG, PNG, WEBP. Tamano maximo: 5MB
                         </small>
                     </div>
 
@@ -109,5 +109,5 @@ require_once __DIR__ . '/layouts/header-admin.php';
 </div>
 
 <?php
-require_once __DIR__ . '/layouts/footer-admin.php';
+require_once __DIR__ . '/../vista/layouts/footer.php';
 ?>
