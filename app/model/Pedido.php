@@ -47,7 +47,7 @@ class Pedido
                 LEFT JOIN compraestadotipo cet ON ce.idcompraestadotipo = cet.idcompraestadotipo
                 LEFT JOIN compraitem ci ON c.idcompra = ci.idcompra
                 LEFT JOIN slider_home sh ON ci.idproducto = sh.producto_id
-                WHERE ce.idcompraestadotipo IN (1, 2)
+                WHERE ce.idcompraestadotipo IN (1, 2, 3)
                 GROUP BY c.idcompra, c.cofecha, u.usnombre, u.usmail, ce.idcompraestadotipo, cet.cetdescripcion
                 ORDER BY c.cofecha DESC";
 
@@ -86,6 +86,24 @@ class Pedido
                 FROM compraitem ci
                 INNER JOIN producto p ON ci.idproducto = p.idproducto
                 WHERE ci.idcompra = :idCompra";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':idCompra', $idCompra, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Obtener el historial completo de estados de un pedido
+    public function obtenerHistorialEstados($idCompra)
+    {
+        $sql = "SELECT ce.idcompraestado, ce.idcompraestadotipo, 
+                    cet.cetdescripcion, cet.cetdetalle,
+                    ce.cefechaini, ce.cefechafin
+                FROM compraestado ce
+                INNER JOIN compraestadotipo cet ON ce.idcompraestadotipo = cet.idcompraestadotipo
+                WHERE ce.idcompra = :idCompra
+                ORDER BY ce.cefechaini ASC";
 
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':idCompra', $idCompra, PDO::PARAM_INT);

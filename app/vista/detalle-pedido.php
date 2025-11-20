@@ -43,7 +43,7 @@ require_once __DIR__ . '/layouts/header.php';
             </div>
 
             <!-- Items del pedido -->
-            <div class="card">
+            <div class="card mb-4">
                 <div class="card-header">
                     <h5 class="mb-0">Productos</h5>
                 </div>
@@ -71,6 +71,56 @@ require_once __DIR__ . '/layouts/header.php';
                                 </tbody>
                             </table>
                         </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <!-- Historial -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Historial de Estados</h5>
+                </div>
+                <div class="card-body">
+                    <?php if (empty($historialEstados)): ?>
+                        <p class="text-muted">No hay historial disponible.</p>
+                    <?php else: ?>
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Estado</th>
+                                    <th>Fecha Inicio</th>
+                                    <th>Fecha Fin</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($historialEstados as $estado): ?>
+                                    <tr>
+                                        <td>
+                                            <?php
+                                            $badgeClass = match ($estado['idcompraestadotipo']) {
+                                                1 => 'bg-warning',
+                                                2 => 'bg-info',
+                                                3 => 'bg-primary',
+                                                4 => 'bg-danger',
+                                                default => 'bg-secondary'
+                                            };
+                                            ?>
+                                            <span class="badge <?= $badgeClass ?>">
+                                                <?= ucfirst($estado['cetdescripcion']) ?>
+                                            </span>
+                                        </td>
+                                        <td><?= date('d/m/Y H:i', strtotime($estado['cefechaini'])) ?></td>
+                                        <td>
+                                            <?php if ($estado['cefechafin']): ?>
+                                                <?= date('d/m/Y H:i', strtotime($estado['cefechafin'])) ?>
+                                            <?php else: ?>
+                                                <span class="text-muted">-</span>
+                                            <?php endif; ?>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
                     <?php endif; ?>
                 </div>
             </div>

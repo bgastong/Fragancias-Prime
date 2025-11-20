@@ -58,7 +58,8 @@ class PedidoController
             exit;
         }
 
-        $items = $pedidoModel->obtenerItems($idCompra);
+        $items = $pedidoModel->obtenerItems($idCompra); // obtener items del pedido
+        $historialEstados = $pedidoModel->obtenerHistorialEstados($idCompra); // obtener historial
 
         require_once __DIR__ . '/../vista/detalle-pedido.php';
     }

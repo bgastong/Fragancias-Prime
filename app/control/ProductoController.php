@@ -104,7 +104,7 @@ class ProductoController
         require_once __DIR__ . '/../vista-admin/productos-crear.php';
     }
 
-    public function editar() // ABM - EDITAR
+    public function editar() // ABM - EDITAR    
     {
         // Solo admin puede editar productos
         AuthMiddleware::requiereAutenticacion();
