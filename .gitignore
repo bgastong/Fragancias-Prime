@@ -1,7 +1,8 @@
 ###########################################
 # ARCHIVOS DE CONFIGURACIÓN (NO SUBIR)
 ###########################################
-app/config/Database.php
+app/config/database.php
+app/config/mail.php
 app/config/*.php
 
 ###########################################
@@ -64,6 +65,8 @@ php_errors.log
 # SUBIDAS / IMÁGENES DINÁMICAS
 ###########################################
 public/uploads/
+public/upload/productos/*
+!public/upload/productos/.gitkeep
 public/img/temp/
 
 ###########################################
@@ -77,3 +80,10 @@ public/img/temp/
 .env
 .env.local
 .env.*.local
+
+###########################################
+# DOCUMENTACIÓN TEMPORAL
+###########################################
+INSTRUCCIONES_EMAIL.md
+NOTAS.md
+TODO.md

@@ -53,24 +53,6 @@ $usuario = $_SESSION['usuario'] ?? null;
                 <!-- Menú dinámico según rol -->
                 <ul class="navbar-nav me-auto">
                     
-                    <?php if ($usuario && RoleMiddleware::esAdmin()): ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="?controller=admin&action=dashboard">
-                                <i class="bi bi-speedometer2 me-1"></i>Dashboard
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="?controller=producto&action=listar">
-                                <i class="bi bi-box-seam me-1"></i>Productos
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="?controller=usuario&action=listar">
-                                <i class="bi bi-people me-1"></i>Usuarios
-                            </a>
-                        </li>
-                    <?php endif; ?>
-
                     <?php if ($usuario && RoleMiddleware::esDeposito()): ?>
                         <li class="nav-item">
                             <a class="nav-link" href="?controller=pedido&action=pendientes">
@@ -133,6 +115,33 @@ $usuario = $_SESSION['usuario'] ?? null;
                                 Salir
                             </a>
                         </li>
+                        
+                        <!-- Menú admin (solo para admin) -->
+                        <?php if (RoleMiddleware::esAdmin()): ?>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link-icon" href="#" id="adminDropdown" role="button" 
+                                   data-bs-toggle="dropdown" aria-expanded="false" title="Menú Admin">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="adminDropdown">
+                                    <li>
+                                        <a class="dropdown-item" href="?controller=admin&action=dashboard">
+                                            <i class="bi bi-speedometer2 me-2"></i>Dashboard
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="?controller=producto&action=listar">
+                                            <i class="bi bi-box-seam me-2"></i>Productos
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="?controller=usuario&action=listar">
+                                            <i class="bi bi-people me-2"></i>Usuarios
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        <?php endif; ?>
                     <?php endif; ?>
 
                     <!-- Mis Pedidos (solo para clientes) -->

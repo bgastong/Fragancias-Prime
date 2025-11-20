@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../model/Usuario.php';
+require_once __DIR__ . '/../model/MailService.php';
 
 class AuthController
 {
@@ -113,8 +114,28 @@ class AuthController
                 $resultado = $usuarioModel->crearUsuario($nombre, $clave, $email);
 
                 if (isset($resultado['success']) && $resultado['success']) {
-                    // Usuario creado exitosamente
-                    $exito = 'Usuario creado exitosamente. Ya puedes iniciar sesión.';
+                    // Usuario creado exitosamente - enviar email de bienvenida
+                    try {
+                        // Verificar si el autoload de Composer está disponible
+                        $autoloadPath = ROOT_PATH . '/vendor/autoload.php';
+                        if (file_exists($autoloadPath)) {
+                            require_once $autoloadPath;
+                            
+                            $mailService = new MailService();
+                            $emailEnviado = $mailService->enviarBienvenida($email, $nombre);
+                            
+                            if ($emailEnviado) {
+                                $exito = 'Usuario creado exitosamente. Te hemos enviado un email de bienvenida. Ya puedes iniciar sesión.';
+                            } else {
+                                $exito = 'Usuario creado exitosamente. Ya puedes iniciar sesión.';
+                            }
+                        } else {
+                            $exito = 'Usuario creado exitosamente. Ya puedes iniciar sesión.';
+                        }
+                    } catch (Exception $e) {
+                        error_log("Error al enviar email de bienvenida: " . $e->getMessage());
+                        $exito = 'Usuario creado exitosamente. Ya puedes iniciar sesión.';
+                    }
                 } else {
                     $error = $resultado['error'];
                 }

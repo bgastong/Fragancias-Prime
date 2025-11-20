@@ -6,7 +6,7 @@ class AdminController
 {
     public function __construct()
     {
-        // Verificar que sea admin en cada acción
+        // Verificar que sea admin en cada accion
         RoleMiddleware::requiereAdmin();
     }
 
@@ -17,6 +17,6 @@ class AdminController
 
     public function reportes()
     {
-        echo "Página de reportes en construcción";
+        echo "Pagina de reportes en construcción";
     }
 }
