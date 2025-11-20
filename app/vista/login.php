@@ -56,7 +56,7 @@
             </button>
 
             <div class="text-center small">
-                ¿No tenés cuenta? <a href="../vista/registro.php" class="text-decoration-none">Registrate acá</a>
+                ¿No tenes cuenta? <a href="?controller=auth&action=registro" class="text-decoration-none fw-semibold">Registrate aca</a>
             </div>
 
         </form>

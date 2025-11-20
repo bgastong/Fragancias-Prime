@@ -3,6 +3,10 @@ require_once __DIR__ . '/app/model/Usuario.php';
 
 $usuarioModel = new Usuario();
 
-$id = $usuarioModel->crearUsuario("gaston", "1234", "gaston@test.com");
+$resultado = $usuarioModel->crearUsuario("gaston", "1234", "gaston@test.com");
 
-echo "Usuario creado con ID: " . $id;
+if (isset($resultado['success']) && $resultado['success']) {
+    echo "Usuario creado exitosamente con ID: " . $resultado['id'];
+} else {
+    echo "Error: " . $resultado['error'];
+}

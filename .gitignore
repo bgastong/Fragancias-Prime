@@ -5,6 +5,15 @@ app/config/Database.php
 app/config/*.php
 
 ###########################################
+# SCRIPTS DE CREACIÓN DE USUARIOS (SEGURIDAD)
+###########################################
+crear_admin.php
+crear_usuario.php
+asignar_admin.php
+init_roles.php
+init_roles.sql
+
+###########################################
 # COMPOSER / LIBRERÍAS
 ###########################################
 vendor/
