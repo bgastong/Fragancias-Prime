@@ -33,7 +33,7 @@ class Carrito
 
     public function obtener()
     {
-        return $_SESSION['carrito'];
+        return $_SESSION['carrito']; // Retorna array de idProducto -> cantidad
     }
 
     public function totalProductos()
@@ -43,7 +43,7 @@ class Carrito
 
     public function estaVacio()
     {
-        return empty($_SESSION['carrito']);
+        return empty($_SESSION['carrito']); // Verifica si el carrito esta vacio
     }
 
     // Agregar producto con validacion de stock

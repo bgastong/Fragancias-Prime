@@ -8,8 +8,8 @@ require_once __DIR__ . '/../../middleware/RoleMiddleware.php';
 
 $usuario = $_SESSION['usuario'] ?? null; // Obtener usuario logueado
 
-// Detectar si estamos en vista admin
-$isAdminView = isset($esVistaAdmin) && $esVistaAdmin === true;
+// Detectar si estamos en vista admin segun el controlador
+$isAdminView = isset($esVistaAdmin) && $esVistaAdmin === true; // Variable seteada en controlador admin
 ?>
 <!doctype html>
 <html lang="es">
@@ -68,7 +68,6 @@ $isAdminView = isset($esVistaAdmin) && $esVistaAdmin === true;
 </head>
 
 <body>
-
     <?php if ($isAdminView): ?>
         <!-- layout admin -->
         <div class="container-fluid">

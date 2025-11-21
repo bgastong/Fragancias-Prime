@@ -36,7 +36,7 @@ class Producto extends DataBase
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function listarTodos()
+    public function listarTodos() // Para listado publico
     {
         $sql = "SELECT * FROM producto ORDER BY idproducto DESC";
         $stmt = $this->conexion->prepare($sql);
@@ -44,7 +44,7 @@ class Producto extends DataBase
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function listarConPrecio()
+    public function listarConPrecio() // Para panel admin
     {
         $sql = "SELECT p.*, sh.precio, sh.imagen, sh.orden, sh.subtitulo
                 FROM producto p
@@ -55,7 +55,7 @@ class Producto extends DataBase
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function obtenerPorId($idProducto)
+    public function obtenerPorId($idProducto) // Obtener producto por ID
     {
         $sql = "SELECT p.*, sh.id as slider_id, sh.precio, sh.imagen, sh.orden, sh.subtitulo, sh.descripcion
                 FROM producto p
@@ -69,7 +69,7 @@ class Producto extends DataBase
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function crear($datos)
+    public function crear($datos) //ABM - ALTA  
     {
         try {
             $this->conexion->beginTransaction();
@@ -109,7 +109,7 @@ class Producto extends DataBase
         }
     }
 
-    public function editar($idProducto, $datos)
+    public function editar($idProducto, $datos) // ABM - EDITAR
     {
         try {
             $this->conexion->beginTransaction();

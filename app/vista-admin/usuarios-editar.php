@@ -53,7 +53,7 @@ $rolActual = !empty($rolesUsuario) ? $rolesUsuario[0]['idrol'] : null;
                         <div class="mb-3">
                             <label class="form-label fw-bold">Estado:</label>
                             <p>
-                                <?php if (is_null($usuario['usdeshabilitado'])): ?>
+                                <?php if (empty($usuario['usdeshabilitado'])): ?>
                                     <span class="badge bg-success">Activo</span>
                                 <?php else: ?>
                                     <span class="badge bg-danger">

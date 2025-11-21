@@ -39,7 +39,7 @@ class RoleMiddleware
     }
 
     //verifico que el usuario tiene rol requerido
-    public static function requiereRol($rolRequerido)
+    public static function requiereRol($rolRequerido) // Exige que el usuario tenga exactamente ese unico rol.
     {
         AuthMiddleware::requiereAutenticacion(); // primero autenticacion
 
@@ -50,7 +50,7 @@ class RoleMiddleware
     }
 
     //verifico que el uss tiene algun rol permitido
-    public static function requiereAlgunRol($rolesPermitidos)
+    public static function requiereAlgunRol($rolesPermitidos) // Exige que el usuario tenga al menos uno de los roles permitidos.
     {
         AuthMiddleware::requiereAutenticacion();
 

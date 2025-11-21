@@ -32,7 +32,7 @@ class Pedido
         $stmt->bindParam(':usuarioId', $usuarioId, PDO::PARAM_INT);
         $stmt->execute();
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC); // Retorna array de pedidos
     }
 
     public function obtenerPendientes()
@@ -52,7 +52,7 @@ class Pedido
                 ORDER BY c.cofecha DESC";
 
         $stmt = $this->db->query($sql);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC); // Retorna array de pedidos
     }
 
     // Obtener un pedido por su ID
@@ -75,7 +75,7 @@ class Pedido
         $stmt->bindParam(':idCompra', $idCompra, PDO::PARAM_INT);
         $stmt->execute();
 
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        return $stmt->fetch(PDO::FETCH_ASSOC); // Retorna un solo pedido
     }
 
 
@@ -91,7 +91,7 @@ class Pedido
         $stmt->bindParam(':idCompra', $idCompra, PDO::PARAM_INT);
         $stmt->execute();
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC); // Retorna array de items
     }
 
     // Obtener el historial completo de estados de un pedido
@@ -103,15 +103,14 @@ class Pedido
                 FROM compraestado ce
                 INNER JOIN compraestadotipo cet ON ce.idcompraestadotipo = cet.idcompraestadotipo
                 WHERE ce.idcompra = :idCompra
-                ORDER BY ce.cefechaini ASC";
+                ORDER BY ce.cefechaini ASC"; // Ordena por fecha de inicio ascendente
 
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':idCompra', $idCompra, PDO::PARAM_INT);
         $stmt->execute();
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC); // Retorna array de estados
     }
-
 
     // Crear un nuevo pedido (compra)
     public function crear($usuarioId, $items)
@@ -124,10 +123,10 @@ class Pedido
                     VALUES (:usuarioId, NOW())";
 
             $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':usuarioId', $usuarioId, PDO::PARAM_INT);
+            $stmt->bindParam(':usuarioId', $usuarioId, PDO::PARAM_INT); 
             $stmt->execute();
 
-            $idCompra = $this->db->lastInsertId();
+            $idCompra = $this->db->lastInsertId(); 
 
             // Insertar items de la compra
             $sqlItem = "INSERT INTO compraitem (idcompra, idproducto, cicantidad) 
@@ -304,9 +303,9 @@ class Pedido
     public function cancelarPedido($idCompra, $productoModel, $usuarioModel, $mailService)
     {
         try {
-            $this->db->beginTransaction(); 
+            $this->db->beginTransaction();  // Inicio de transaccion
             
-            $pedido = $this->obtenerPorId($idCompra);
+            $pedido = $this->obtenerPorId($idCompra); // Obtener datos del pedido
             
             // Si el pedido ya fue aceptado (estado >= 2), restaurar el stock
             if ($pedido['idcompraestadotipo'] >= 2) {
