@@ -20,7 +20,12 @@ class PedidoController
         
         $pedidos = $pedidoModel->obtenerPorUsuario($usuarioId);
 
-        require_once __DIR__ . '/../vista/mis-pedidos.php';
+        require_once __DIR__ . '/../helpers/view.php';
+        require_once __DIR__ . '/../helpers/header.php';
+        $usuario = $_SESSION['usuario'] ?? null;
+        $menu = obtenerMenuPorDefecto($usuario);
+        $datosHeader = obtenerDatosHeaderDesdeControlador($usuario, $menu);
+        render(__DIR__ . '/../vista/mis-pedidos.php', ['pedidos' => $pedidos, 'datosHeader' => $datosHeader]);
     }
 
     public function pendientes()
@@ -32,7 +37,12 @@ class PedidoController
         $pedidoModel = new Pedido();
         $pedidos = $pedidoModel->obtenerPendientes();
 
-        require_once __DIR__ . '/../vista/pedidos-pendientes.php';
+        require_once __DIR__ . '/../helpers/view.php';
+        require_once __DIR__ . '/../helpers/header.php';
+        $usuario = $_SESSION['usuario'] ?? null;
+        $menu = obtenerMenuPorDefecto($usuario);
+        $datosHeader = obtenerDatosHeaderDesdeControlador($usuario, $menu);
+        render(__DIR__ . '/../vista/pedidos-pendientes.php', ['pedidos' => $pedidos, 'datosHeader' => $datosHeader, 'esVistaAdmin' => true]);
     }
 
     public function detalle()
@@ -61,7 +71,27 @@ class PedidoController
         $items = $pedidoModel->obtenerItems($idCompra); // obtener items del pedido
         $historialEstados = $pedidoModel->obtenerHistorialEstados($idCompra); // obtener historial
 
-        require_once __DIR__ . '/../vista/detalle-pedido.php';
+        require_once __DIR__ . '/../helpers/view.php';
+        require_once __DIR__ . '/../helpers/header.php';
+        $usuario = $_SESSION['usuario'] ?? null;
+        $menu = obtenerMenuPorDefecto($usuario);
+        $datosHeader = obtenerDatosHeaderDesdeControlador($usuario, $menu);
+
+        // Preparar flags de permisos y usuario para la vista (desacoplar lógica de la vista)
+        $usuarioId = AuthMiddleware::usuarioId();
+        $esAdmin = RoleMiddleware::esAdmin();
+        $esDueno = ($pedido['idusuario'] == $usuarioId);
+
+        render(__DIR__ . '/../vista/detalle-pedido.php', [
+            'pedido' => $pedido,
+            'items' => $items,
+            'historialEstados' => $historialEstados,
+            'datosHeader' => $datosHeader,
+            'esVistaAdmin' => $esAdmin,
+            'esAdmin' => $esAdmin,
+            'usuarioId' => $usuarioId,
+            'esDueno' => $esDueno,
+        ]);
     }
 
     public function aceptar()

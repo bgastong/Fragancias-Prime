@@ -1,14 +1,4 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-// Cargar middleware para verificar roles
-require_once __DIR__ . '/../../middleware/RoleMiddleware.php';
-
-$usuario = $_SESSION['usuario'] ?? null; // Obtener usuario logueado
-
-// Detectar si estamos en vista admin segun el controlador
 $isAdminView = isset($esVistaAdmin) && $esVistaAdmin === true; // Variable seteada en controlador admin
 ?>
 <!doctype html>
@@ -81,51 +71,29 @@ $isAdminView = isset($esVistaAdmin) && $esVistaAdmin === true; // Variable setea
                             <h5 class="text-white mb-0">Panel Admin</h5>
                         </div>
 
-                        <ul class="nav flex-column mt-3">
-                            <li class="nav-item">
-                                
-                                <a class="nav-link <?= isset($activeMenu) && $activeMenu === 'dashboard' ? 'active' : '' ?>"  
-                                    href="?controller=admin&action=dashboard">
-                                    <i class="bi bi-speedometer2"></i> Dashboard
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link <?= isset($activeMenu) && $activeMenu === 'productos' ? 'active' : '' ?>"
-                                    href="?controller=producto&action=listar">
-                                    <i class="bi bi-box-seam"></i> Productos
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="?controller=producto&action=crear">
-                                    <i class="bi bi-plus-circle"></i> Nuevo Producto
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link <?= isset($activeMenu) && $activeMenu === 'usuarios' ? 'active' : '' ?>"
-                                    href="?controller=usuario&action=listar">
-                                    <i class="bi bi-people"></i> Usuarios
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link <?= isset($activeMenu) && $activeMenu === 'pedidos' ? 'active' : '' ?>"
-                                    href="?controller=pedido&action=pendientes">
-                                    <i class="bi bi-cart-check"></i> Pedidos Pendientes
-                                </a>
-                            </li>
-
-                            <hr class="border-secondary my-3">
-
-                            <li class="nav-item">
-                                <a class="nav-link" href="?controller=home&action=index">
-                                    <i class="bi bi-house"></i> Ver Sitio
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-danger" href="?controller=auth&action=logout">
-                                    <i class="bi bi-box-arrow-right"></i> Salir
-                                </a>
-                            </li>
-                        </ul>
+                        <?php
+                        // Render admin sidebar dinámico desde $datosHeader['sidebarAdmin'] si esta disponible.
+                        $adminSidebar = $datosHeader['sidebarAdmin'] ?? [];
+                        if (!empty($adminSidebar)) {
+                            echo '<ul class="nav flex-column mt-3">';
+                            foreach ($adminSidebar as $entry) {
+                                if (isset($entry['divider']) && $entry['divider']) {
+                                    echo '<hr class="border-secondary my-3">';
+                                    continue;
+                                }
+                                $key = $entry['key'] ?? '';
+                                $label = htmlspecialchars($entry['label'] ?? '');
+                                $href = $entry['href'] ?? '#';
+                                $icon = isset($entry['icon']) && $entry['icon'] ? '<i class="bi ' . $entry['icon'] . '"></i> ' : '';
+                                $class = isset($entry['class']) ? ' ' . $entry['class'] : '';
+                                $isActive = isset($activeMenu) && $activeMenu === $key ? 'active' : '';
+                                echo '<li class="nav-item">';
+                                echo '<a class="nav-link ' . $isActive . $class . '" href="' . $href . '">' . $icon . ' ' . $label . '</a>';
+                                echo '</li>';
+                            }
+                            echo '</ul>';
+                        }
+                        ?>
 
                     </div>
                 </nav>
@@ -139,17 +107,30 @@ $isAdminView = isset($esVistaAdmin) && $esVistaAdmin === true; // Variable setea
                         <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
                             <div class="container">
 
-                                <!-- logo -->
-                                <a class="navbar-brand d-flex align-items-center" href="?controller=home&action=index">
-                                    <img src="/Fragancias Prime/public/img/prime.png" alt="PRIME" class="navbar-logo">
-                                </a>
-
                                 <!-- cont -->
                                 <div class="collapse navbar-collapse" id="mainNavbar">
 
-                                    <!-- Menu dinamico -->
-                                    <ul class="navbar-nav me-auto">
-                                    </ul>
+                                    <?php
+                                    // Logo
+                                    $logoUrl = isset($datosHeader['logo']) ? $datosHeader['logo'] : '/Fragancias Prime/public/img/prime.png';
+                                    echo '<a class="navbar-brand d-flex align-items-center" href="?controller=home&action=index">';
+                                    echo '<img src="' . $logoUrl . '" alt="PRIME" class="navbar-logo">';
+                                    echo '</a>';
+
+                                    // Menu izquierdo (ya preparado por el controlador)
+                                    $leftMenu = $datosHeader['menuIzquierdo'] ?? [];
+                                    echo '<ul class="navbar-nav me-auto">';
+                                    foreach ($leftMenu as $item) {
+                                        $show = isset($item['condition']) ? (bool)$item['condition'] : true;
+                                        if (!$show) continue;
+                                        $isActive = isset($activeMenu) && $activeMenu === ($item['key'] ?? '') ? 'active' : '';
+                                        $label = htmlspecialchars($item['label'] ?? '');
+                                        $href = $item['href'] ?? '#';
+                                        $icon = isset($item['icon']) && $item['icon'] ? '<i class="bi ' . $item['icon'] . ' me-1"></i>' : '';
+                                        echo "<li class=\"nav-item\"><a class=\"nav-link {$isActive}\" href=\"{$href}\">{$icon}{$label}</a></li>";
+                                    }
+                                    echo '</ul>';
+                                    ?>
 
                                     <!-- buscador -->
                                     <form class="d-flex mx-lg-auto my-2 my-lg-0 flex-grow-1 search-form"
@@ -170,101 +151,74 @@ $isAdminView = isset($esVistaAdmin) && $esVistaAdmin === true; // Variable setea
                                         </div>
                                     </form>
 
-                                    <!-- login & carrito -->
+                                    <!-- login & carrito (dinamico) -->
                                     <ul class="navbar-nav ms-lg-3 align-items-lg-center gap-2">
+                                        <?php
+                                        $auth = $datosHeader['autenticacion'] ?? ['tipo' => 'invitado', 'links' => []];
 
-                                        <?php if (!$usuario): ?>
-                                            <!-- No logueado -->
-                                            <li class="nav-item">
-                                                <a class="nav-link nav-link-custom" href="?controller=auth&action=login">
-                                                    Login
-                                                </a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a class="nav-link nav-link-custom" href="?controller=auth&action=registro">
-                                                    Registrarse
-                                                </a>
-                                            </li>
-                                        <?php else: ?>
-                                            <!-- Logueado -->
+                                        if (($auth['tipo'] ?? '') === 'invitado') {
+                                            foreach ($auth['links'] as $link) {
+                                                echo '<li class="nav-item"><a class="nav-link nav-link-custom" href="' . ($link['href'] ?? '#') . '">' . htmlspecialchars($link['label']) . '</a></li>';
+                                            }
+                                        } else {
+                                            // Usuario logueado: mostrar dropdown con opciones
+                                            $user = $auth['usuario'] ?? null;
+                                            $userLabel = $user['label'] ?? '';
+                                        ?>
                                             <li class="nav-item dropdown">
-                                                <a class="nav-link-icon" href="#" id="userDropdown" role="button"
-                                                    data-bs-toggle="dropdown" aria-expanded="false" title="Mi Cuenta">
+                                                <a class="nav-link-icon" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" title="Mi Cuenta">
                                                     <i class="bi bi-person-circle"></i>
                                                 </a>
                                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                                                     <li>
-                                                        <span class="dropdown-item-text">
-                                                            Hola, <strong><?= htmlspecialchars(ucfirst(strtolower($usuario['usnombre']))) ?></strong>
-                                                        </span>
+                                                        <span class="dropdown-item-text">Hola, <strong><?= $userLabel ?></strong></span>
                                                     </li>
                                                     <li>
                                                         <hr class="dropdown-divider">
                                                     </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="?controller=usuario&action=cambiarContrasena">
-                                                            <i class="bi bi-key me-2"></i>Cambiar Contrasena
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="?controller=usuario&action=cambiarEmail">
-                                                            <i class="bi bi-envelope me-2"></i>Cambiar Email
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <hr class="dropdown-divider">
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item text-danger" href="?controller=auth&action=logout">
-                                                            <i class="bi bi-box-arrow-right me-2"></i>Salir
-                                                        </a>
-                                                    </li>
+                                                    <?php
+                                                    foreach ($user['dropdown'] as $d) {
+                                                        if (isset($d['divider']) && $d['divider']) {
+                                                            echo '<li><hr class="dropdown-divider"></li>';
+                                                            continue;
+                                                        }
+                                                        $class = isset($d['class']) ? ' ' . $d['class'] : '';
+                                                        $icon = isset($d['icon']) ? '<i class="bi ' . $d['icon'] . ' me-2"></i>' : '';
+                                                        echo '<li><a class="dropdown-item' . $class . '" href="' . ($d['href'] ?? '#') . '">' . $icon . htmlspecialchars($d['label']) . '</a></li>';
+                                                    }
+                                                    ?>
                                                 </ul>
                                             </li>
+                                        <?php
 
-                                            <!-- Menu admin (solo para admin) -->
-                                            <?php if (RoleMiddleware::esAdmin()): ?>
-                                                <li class="nav-item dropdown">
-                                                    <a class="nav-link-icon" href="#" id="adminDropdown" role="button"
-                                                        data-bs-toggle="dropdown" aria-expanded="false" title="Menu Admin">
-                                                        <i class="bi bi-three-dots-vertical"></i>
-                                                    </a>
-                                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="adminDropdown">
-                                                        <li>
-                                                            <a class="dropdown-item" href="?controller=admin&action=dashboard">
-                                                                <i class="bi bi-speedometer2 me-2"></i>Dashboard
-                                                            </a>
-                                                        </li>
-                                                        <li>
-                                                            <a class="dropdown-item" href="?controller=producto&action=listar">
-                                                                <i class="bi bi-box-seam me-2"></i>Productos
-                                                            </a>
-                                                        </li>
-                                                        <li>
-                                                            <a class="dropdown-item" href="?controller=usuario&action=listar">
-                                                                <i class="bi bi-people me-2"></i>Usuarios
-                                                            </a>
-                                                        </li>
-                                                    </ul>
-                                                </li>
-                                            <?php endif; ?>
+                                            // Admin quick menu if present
+                                            $adminQuick = $datosHeader['adminRapido'] ?? [];
+                                            if (!empty($adminQuick)) { // mostrar menu admin
+                                                echo '<li class="nav-item dropdown">';
+                                                echo '<a class="nav-link-icon" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" title="Menu Admin">';
+                                                echo '<i class="bi bi-three-dots-vertical"></i>';
+                                                echo '</a>';
+                                                echo '<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="adminDropdown">';
+                                                foreach ($adminQuick as $aq) {
+                                                    $icon = isset($aq['icon']) ? '<i class="bi ' . $aq['icon'] . ' me-2"></i>' : '';
+                                                    echo '<li><a class="dropdown-item" href="' . ($aq['href'] ?? '#') . '">' . $icon . htmlspecialchars($aq['label']) . '</a></li>';
+                                                }
+                                                echo '</ul></li>';
+                                            }
 
-                                            <!-- Mis Pedidos (solo para clientes) -->
-                                            <?php if (RoleMiddleware::esCliente()): ?>
-                                                <li class="nav-item">
-                                                    <a class="nav-link-icon" href="?controller=pedido&action=misPedidos" title="Mis Pedidos">
-                                                        <i class="bi bi-bag-check"></i>
-                                                    </a>
-                                                </li>
-                                            <?php endif; ?>
+                                            // Mis pedidos
+                                            if (!empty($datosHeader['misPedidos'])) {
+                                                $mp = $datosHeader['misPedidos'];
+                                                echo '<li class="nav-item"><a class="nav-link-icon" href="' . ($mp['href'] ?? '#') . '" title="Mis Pedidos"><i class="bi ' . ($mp['icon'] ?? '') . '"></i></a></li>';
+                                            }
 
-                                            <!-- Carrito (solo para usuarios logueados) -->
-                                            <li class="nav-item">
-                                                <a class="nav-link-icon" href="?controller=carrito&action=ver" title="Carrito">
-                                                    <i class="bi bi-cart3"></i>
-                                                </a>
-                                            </li>
-                                        <?php endif; ?>
+                                            // Carrito
+                                            $cart = $datosHeader['carrito'] ?? null;
+                                            if ($cart) {
+                                                echo '<li class="nav-item"><a class="nav-link-icon" href="' . ($cart['href'] ?? '#') . '" title="Carrito"><i class="bi ' . ($cart['icon'] ?? '') . '"></i></a></li>';
+                                            }
+                                        }
+                                        ?>
                                     </ul>
 
                                 </div>

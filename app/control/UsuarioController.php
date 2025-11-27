@@ -15,7 +15,12 @@ class UsuarioController
         $usuarioModel = new Usuario();
         $usuarios = $usuarioModel->listarTodos();
 
-        require_once __DIR__ . '/../vista-admin/usuarios-listar.php';
+        require_once __DIR__ . '/../helpers/view.php';
+        require_once __DIR__ . '/../helpers/header.php';
+        $usuario = $_SESSION['usuario'] ?? null;
+        $menu = obtenerMenuPorDefecto($usuario);
+        $datosHeader = obtenerDatosHeaderDesdeControlador($usuario, $menu);
+        render(__DIR__ . '/../vista-admin/usuarios-listar.php', ['usuarios' => $usuarios, 'datosHeader' => $datosHeader, 'esVistaAdmin' => true]);
     }
 
     public function editar()
@@ -59,7 +64,12 @@ class UsuarioController
             }
         }
 
-        require_once __DIR__ . '/../vista-admin/usuarios-editar.php';
+        require_once __DIR__ . '/../helpers/view.php';
+        require_once __DIR__ . '/../helpers/header.php';
+        $usuario = $_SESSION['usuario'] ?? null;
+        $menu = obtenerMenuPorDefecto($usuario);
+        $datosHeader = obtenerDatosHeaderDesdeControlador($usuario, $menu);
+        render(__DIR__ . '/../vista-admin/usuarios-editar.php', ['usuario' => $usuario, 'datosHeader' => $datosHeader, 'esVistaAdmin' => true]);
     }
 
     public function deshabilitar()
@@ -141,7 +151,12 @@ class UsuarioController
             }
         }
         
-        require_once __DIR__ . '/../vista/cambiar-contrasena.php';
+        require_once __DIR__ . '/../helpers/view.php';
+        require_once __DIR__ . '/../helpers/header.php';
+        $usuario = $_SESSION['usuario'] ?? null;
+        $menu = obtenerMenuPorDefecto($usuario);
+        $datosHeader = obtenerDatosHeaderDesdeControlador($usuario, $menu);
+        render(__DIR__ . '/../vista/cambiar-contrasena.php', ['datosHeader' => $datosHeader]);
     }
 
     public function cambiarEmail()
@@ -167,6 +182,11 @@ class UsuarioController
         }
         
         $usuario = $usuarioModel->buscarId($usuarioId);
-        require_once __DIR__ . '/../vista/cambiar-email.php';
+        require_once __DIR__ . '/../helpers/view.php';
+        require_once __DIR__ . '/../helpers/header.php';
+        $usuario = $_SESSION['usuario'] ?? null;
+        $menu = obtenerMenuPorDefecto($usuario);
+        $datosHeader = obtenerDatosHeaderDesdeControlador($usuario, $menu);
+        render(__DIR__ . '/../vista/cambiar-email.php', ['usuario' => $usuario, 'datosHeader' => $datosHeader]);
     }
 }

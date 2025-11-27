@@ -19,15 +19,20 @@ class CarritoController
         $productos = [];
 
         // Convertimos IDs a datos reales del producto
-        foreach ($items as $id => $cantidad) {
-            $p = $productoModel->getProductoById($id);
-            if ($p) {
-                $p['cantidad'] = $cantidad;
-                $productos[] = $p;
+        foreach ($items as $id => $cantidad) { // $id = idProducto, $cantidad = cantidad
+            $p = $productoModel->getProductoById($id); // Obtener producto por ID
+            if ($p) { 
+                $p['cantidad'] = $cantidad; 
+                $productos[] = $p; 
             }
         }
 
-        require_once __DIR__ . '/../vista/carrito.php';
+        require_once __DIR__ . '/../helpers/view.php';
+        require_once __DIR__ . '/../helpers/header.php';
+        $usuario = $_SESSION['usuario'] ?? null;
+        $menu = obtenerMenuPorDefecto($usuario);
+        $datosHeader = obtenerDatosHeaderDesdeControlador($usuario, $menu);
+        render(__DIR__ . '/../vista/carrito.php', ['productos' => $productos, 'datosHeader' => $datosHeader]);
     }
 
     public function ver()

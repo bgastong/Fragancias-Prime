@@ -134,9 +134,11 @@ require_once __DIR__ . '/layouts/header.php';
                 </div>
                 <div class="card-body">
                     <?php
-                    $usuarioId = AuthMiddleware::usuarioId();
-                    $esAdmin = RoleMiddleware::esAdmin();
-                    $esDueno = $pedido['idusuario'] == $usuarioId;
+                    // Variables de permisos y usuario provistas por el controlador:
+                    // $usuarioId, $esAdmin, $esDueno
+                    $usuarioId = $usuarioId ?? null;
+                    $esAdmin = $esAdmin ?? false;
+                    $esDueno = $esDueno ?? ($pedido['idusuario'] == $usuarioId);
                     ?>
 
                     <?php if ($esAdmin && $estadoId == 1): ?>

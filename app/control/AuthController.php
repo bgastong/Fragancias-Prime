@@ -35,7 +35,13 @@ class AuthController
             }
         }
 
-        require_once __DIR__ . '/../vista/login.php';
+        require_once __DIR__ . '/../helpers/view.php';
+        require_once __DIR__ . '/../helpers/header.php';
+
+        $usuario = $_SESSION['usuario'] ?? null;
+        $menu = obtenerMenuPorDefecto($usuario);
+        $datosHeader = obtenerDatosHeaderDesdeControlador($usuario, $menu);
+        render(__DIR__ . '/../vista/login.php', isset($error) ? ['error' => $error, 'datosHeader' => $datosHeader] : ['datosHeader' => $datosHeader]);
     }
 
     public function logout()
@@ -95,6 +101,17 @@ class AuthController
             }
         }
 
-        require_once __DIR__ . '/../vista/registro.php';
+        require_once __DIR__ . '/../helpers/view.php';
+        require_once __DIR__ . '/../helpers/header.php';
+
+        $vars = [];
+        if (isset($error)) $vars['error'] = $error;
+        if (isset($exito)) $vars['exito'] = $exito;
+
+        $usuario = $_SESSION['usuario'] ?? null;
+        $menu = obtenerMenuPorDefecto($usuario);
+        $datosHeader = obtenerDatosHeaderDesdeControlador($usuario, $menu);
+        $vars['datosHeader'] = $datosHeader;
+        render(__DIR__ . '/../vista/registro.php', $vars);
     }
 }

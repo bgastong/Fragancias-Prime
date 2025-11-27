@@ -1,7 +1,5 @@
 <?php
-require_once __DIR__ . '/../middleware/RoleMiddleware.php';
-RoleMiddleware::requiereAdmin(); // solo admin
-
+// El controlador ya verifica permisos. No comprobar roles en la vista.
 require_once __DIR__ . '/../model/Usuario.php';
 require_once __DIR__ . '/../model/Producto.php';
 require_once __DIR__ . '/../model/Pedido.php';

@@ -10,6 +10,9 @@ define('APP_PATH', ROOT_PATH . '/app');
 // Cargar autoload de Composer
 require_once ROOT_PATH . '/vendor/autoload.php';
 
+// Cargar helper de vistas (render) — éste regenerará menú/header antes de incluir cada vista
+require_once ROOT_PATH . '/app/helpers/view.php';
+
 $controllerName = $_GET['controller'] ?? 'home';
 $actionName     = $_GET['action'] ?? 'index';
 

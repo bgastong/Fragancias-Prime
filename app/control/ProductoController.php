@@ -22,7 +22,12 @@ class ProductoController
             exit;
         }
 
-        require_once __DIR__ . '/../vista/detalle_producto.php';
+        require_once __DIR__ . '/../helpers/view.php';
+        require_once __DIR__ . '/../helpers/header.php';
+        $usuario = $_SESSION['usuario'] ?? null;
+        $menu = obtenerMenuPorDefecto($usuario);
+        $datosHeader = obtenerDatosHeaderDesdeControlador($usuario, $menu);
+        render(__DIR__ . '/../vista/detalle_producto.php', ['producto' => $producto, 'datosHeader' => $datosHeader]);
     }
 
     public function listar()
@@ -34,7 +39,12 @@ class ProductoController
         $productoModel = new Producto();
         $productos = $productoModel->listarConPrecio();
 
-        require_once __DIR__ . '/../vista-admin/productos-listar.php';
+        require_once __DIR__ . '/../helpers/view.php';
+        require_once __DIR__ . '/../helpers/header.php';
+        $usuario = $_SESSION['usuario'] ?? null;
+        $menu = obtenerMenuPorDefecto($usuario);
+        $datosHeader = obtenerDatosHeaderDesdeControlador($usuario, $menu);
+        render(__DIR__ . '/../vista-admin/productos-listar.php', ['productos' => $productos, 'datosHeader' => $datosHeader, 'esVistaAdmin' => true]);
     }
 
     public function crear() //ABM - ALTA
@@ -59,7 +69,12 @@ class ProductoController
             // Validar campo requerido
             if (empty($datos['prodetalle'])) {
                 $_SESSION['mensaje_error'] = "El nombre del producto es obligatorio";
-                require_once __DIR__ . '/../vista-admin/productos-crear.php';
+                require_once __DIR__ . '/../helpers/view.php';
+                require_once __DIR__ . '/../helpers/header.php';
+                $usuario = $_SESSION['usuario'] ?? null;
+                $menu = obtenerMenuPorDefecto($usuario);
+                $datosHeader = obtenerDatosHeaderDesdeControlador($usuario, $menu);
+                render(__DIR__ . '/../vista-admin/productos-crear.php', ['datosHeader' => $datosHeader, 'esVistaAdmin' => true]);
                 return;
             }
 
@@ -95,16 +110,26 @@ class ProductoController
 
             } catch (Exception $e) {
                 $_SESSION['mensaje_error'] = "Error al crear producto: " . $e->getMessage();
-                require_once __DIR__ . '/../vista-admin/productos-crear.php';
+                require_once __DIR__ . '/../helpers/view.php';
+                require_once __DIR__ . '/../helpers/header.php';
+                $usuario = $_SESSION['usuario'] ?? null;
+                $menu = obtenerMenuPorDefecto($usuario);
+                $datosHeader = obtenerDatosHeaderDesdeControlador($usuario, $menu);
+                render(__DIR__ . '/../vista-admin/productos-crear.php', ['datosHeader' => $datosHeader, 'esVistaAdmin' => true]);
                 return;
             }
         }
 
         // Mostrar formulario
-        require_once __DIR__ . '/../vista-admin/productos-crear.php';
+        require_once __DIR__ . '/../helpers/view.php';
+        require_once __DIR__ . '/../helpers/header.php';
+        $usuario = $_SESSION['usuario'] ?? null;
+        $menu = obtenerMenuPorDefecto($usuario);
+        $datosHeader = obtenerDatosHeaderDesdeControlador($usuario, $menu);
+        render(__DIR__ . '/../vista-admin/productos-crear.php', ['datosHeader' => $datosHeader, 'esVistaAdmin' => true]);
     }
 
-    public function editar() // ABM - EDITAR    
+    public function editar() // ABM - EDITAR
     {
         // Solo admin puede editar productos
         AuthMiddleware::requiereAutenticacion();
@@ -143,7 +168,12 @@ class ProductoController
             // Validar campo requerido
             if (empty($datos['prodetalle'])) {
                 $_SESSION['mensaje_error'] = "El nombre del producto es obligatorio";
-                require_once __DIR__ . '/../vista-admin/productos-editar.php';
+                require_once __DIR__ . '/../helpers/view.php';
+                require_once __DIR__ . '/../helpers/header.php';
+                $usuario = $_SESSION['usuario'] ?? null;
+                $menu = obtenerMenuPorDefecto($usuario);
+                $datosHeader = obtenerDatosHeaderDesdeControlador($usuario, $menu);
+                render(__DIR__ . '/../vista-admin/productos-editar.php', ['producto' => $producto, 'datosHeader' => $datosHeader, 'esVistaAdmin' => true]);
                 return;
             }
 
@@ -179,13 +209,23 @@ class ProductoController
 
             } catch (Exception $e) {
                 $_SESSION['mensaje_error'] = "Error al actualizar producto: " . $e->getMessage();
-                require_once __DIR__ . '/../vista-admin/productos-editar.php';
+                require_once __DIR__ . '/../helpers/view.php';
+                require_once __DIR__ . '/../helpers/header.php';
+                $usuario = $_SESSION['usuario'] ?? null;
+                $menu = obtenerMenuPorDefecto($usuario);
+                $datosHeader = obtenerDatosHeaderDesdeControlador($usuario, $menu);
+                render(__DIR__ . '/../vista-admin/productos-editar.php', ['producto' => $producto, 'datosHeader' => $datosHeader, 'esVistaAdmin' => true]);
                 return;
             }
         }
 
         // Mostrar formulario
-        require_once __DIR__ . '/../vista-admin/productos-editar.php';
+        require_once __DIR__ . '/../helpers/view.php';
+        require_once __DIR__ . '/../helpers/header.php';
+        $usuario = $_SESSION['usuario'] ?? null;
+        $menu = obtenerMenuPorDefecto($usuario);
+        $datosHeader = obtenerDatosHeaderDesdeControlador($usuario, $menu);
+        render(__DIR__ . '/../vista-admin/productos-editar.php', ['producto' => $producto, 'datosHeader' => $datosHeader, 'esVistaAdmin' => true]);
     }
 
     public function eliminar() //ABM - BAJA
