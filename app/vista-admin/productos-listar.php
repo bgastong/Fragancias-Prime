@@ -1,6 +1,7 @@
 <?php
 $esVistaAdmin = true;
 $activeMenu = 'productos';
+require_once __DIR__ . '/../helpers/view.php';
 require_once __DIR__ . '/../vista/layouts/header.php';
 ?>
 
@@ -57,7 +58,7 @@ require_once __DIR__ . '/../vista/layouts/header.php';
                                         <td><?= $producto['idproducto'] ?></td>
                                         <td>
                                             <?php if (!empty($producto['imagen'])): ?>
-                                                <img src="/Fragancias Prime/public/upload/productos/<?= htmlspecialchars($producto['imagen']) ?>"
+                                                <img src="<?= htmlspecialchars(product_image_url($producto, 'Producto sin imagen')) ?>"
                                                     alt="Producto"
                                                     style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
                                             <?php else: ?>

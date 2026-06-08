@@ -1,6 +1,8 @@
 <?php
 $esVistaAdmin = false;
+require_once __DIR__ . '/../helpers/view.php';
 require_once __DIR__ . '/layouts/header.php';
+$productoData = (array) ($productoData ?? $producto ?? []);
 ?>
 
 <div class="container my-5">
@@ -10,41 +12,34 @@ require_once __DIR__ . '/layouts/header.php';
             <div class="card shadow-sm">
                 <?php
                 // Construir ruta de imagen
-                $rutaImagen = '';
-                if (!empty($producto['imagen'])) {
-                    $rutaImagen = '/Fragancias Prime/public/upload/productos/' . $producto['imagen'];
-                } elseif (!empty($producto['pronombre'])) {
-                    $rutaImagen = $producto['pronombre'];
-                } else {
-                    $rutaImagen = '/Fragancias Prime/public/img/no-image.png';
-                }
+                $rutaImagen = product_image_url($productoData, 'Producto sin imagen');
                 ?>
                 <img src="<?php echo htmlspecialchars($rutaImagen); ?>"
                     class="card-img-top"
-                    alt="<?php echo htmlspecialchars($producto['prodetalle']); ?>"
+                    alt="<?php echo htmlspecialchars($productoData['prodetalle']); ?>"
                     style="width: 100%; height: auto; object-fit: cover;"
-                    onerror="this.src='/Fragancias Prime/public/img/no-image.png'">
+                    onerror="this.onerror=null;this.src='<?= htmlspecialchars(placeholder_image_url('Producto sin imagen'), ENT_QUOTES) ?>'">
             </div>
         </div>
 
         <!-- Informacion del producto -->
         <div class="col-md-6">
-            <h1 class="mb-3"><?php echo htmlspecialchars($producto['prodetalle']); ?></h1>
+            <h1 class="mb-3"><?php echo htmlspecialchars($productoData['prodetalle']); ?></h1>
 
-            <?php if (!empty($producto['subtitulo'])): ?>
-                <p class="text-muted fs-5 mb-4"><?php echo htmlspecialchars($producto['subtitulo']); ?></p>
+            <?php if (!empty($productoData['subtitulo'])): ?>
+                <p class="text-muted fs-5 mb-4"><?php echo htmlspecialchars($productoData['subtitulo']); ?></p>
             <?php endif; ?>
 
             <div class="mb-4">
                 <span class="fs-2 fw-bold text-primary">
-                    $<?php echo number_format($producto['precio'] ?? 0, 2); ?>
+                    $<?php echo number_format($productoData['precio'] ?? 0, 2); ?>
                 </span>
             </div>
 
-            <?php if (!empty($producto['descripcion'])): ?>
+            <?php if (!empty($productoData['descripcion'])): ?>
                 <div class="mb-4">
                     <h5>Descripcion</h5>
-                    <p class="text-muted"><?php echo nl2br(htmlspecialchars($producto['descripcion'])); ?></p>
+                    <p class="text-muted"><?php echo nl2br(htmlspecialchars($productoData['descripcion'])); ?></p>
                 </div>
             <?php endif; ?>
 
@@ -52,8 +47,8 @@ require_once __DIR__ . '/layouts/header.php';
             <div class="mb-4">
                 <p class="mb-2">
                     <strong>Disponibilidad:</strong>
-                    <?php if ($producto['procantstock'] > 0): ?>
-                        <span class="badge bg-success">En stock (<?php echo $producto['procantstock']; ?> unidades)</span>
+                    <?php if ($productoData['procantstock'] > 0): ?>
+                        <span class="badge bg-success">En stock (<?php echo $productoData['procantstock']; ?> unidades)</span>
                     <?php else: ?>
                         <span class="badge bg-danger">Sin stock</span>
                     <?php endif; ?>
@@ -62,9 +57,9 @@ require_once __DIR__ . '/layouts/header.php';
 
             <!-- Formulario para agregar al carrito -->
             <?php if (isset($_SESSION['usuario'])): ?>
-                <?php if ($producto['procantstock'] > 0): ?>
+                <?php if ($productoData['procantstock'] > 0): ?>
                     <form action="?controller=carrito&action=agregar" method="POST" class="mb-3">
-                        <input type="hidden" name="idproducto" value="<?php echo $producto['idproducto']; ?>">
+                        <input type="hidden" name="idproducto" value="<?php echo $productoData['idproducto']; ?>">
 
                         <div class="row align-items-end">
                             <div class="col-md-4 mb-3 mb-md-0">
@@ -75,7 +70,7 @@ require_once __DIR__ . '/layouts/header.php';
                                     name="cantidad"
                                     value="1"
                                     min="1"
-                                    max="<?php echo $producto['procantstock']; ?>"
+                                    max="<?php echo $productoData['procantstock']; ?>"
                                     required>
                             </div>
                             <div class="col-md-8">

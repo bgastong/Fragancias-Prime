@@ -55,6 +55,25 @@ class Producto extends DataBase
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function buscar($termino)
+    {
+        $sql = "SELECT p.idproducto, p.pronombre, p.prodetalle, p.procantstock,
+                       sh.precio, sh.imagen, sh.orden, sh.subtitulo, sh.descripcion
+                FROM producto p
+                LEFT JOIN slider_home sh ON p.idproducto = sh.producto_id
+                WHERE p.prodetalle LIKE :termino
+                   OR COALESCE(sh.subtitulo, '') LIKE :termino
+                   OR COALESCE(sh.descripcion, '') LIKE :termino
+                ORDER BY COALESCE(sh.orden, 9999) ASC, p.idproducto DESC";
+
+        $stmt = $this->conexion->prepare($sql);
+        $filtro = '%' . $termino . '%';
+        $stmt->bindParam(':termino', $filtro, PDO::PARAM_STR);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function obtenerPorId($idProducto) // Obtener producto por ID
     {
         $sql = "SELECT p.*, sh.id as slider_id, sh.precio, sh.imagen, sh.orden, sh.subtitulo, sh.descripcion

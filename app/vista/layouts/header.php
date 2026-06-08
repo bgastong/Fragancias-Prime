@@ -1,4 +1,9 @@
 <?php
+$helperViewPath = __DIR__ . '/../../helpers/view.php';
+if (file_exists($helperViewPath)) {
+    require_once $helperViewPath;
+}
+
 $isAdminView = isset($esVistaAdmin) && $esVistaAdmin === true; // Variable seteada en controlador admin
 ?>
 <!doctype html>
@@ -21,7 +26,7 @@ $isAdminView = isset($esVistaAdmin) && $esVistaAdmin === true; // Variable setea
         rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
-    <link rel="stylesheet" href="/Fragancias Prime/public/css/style.css">
+    <link rel="stylesheet" href="<?= asset_url('css/style.css') ?>">
 
     <?php if ($isAdminView): ?>
         <style>
@@ -108,11 +113,12 @@ $isAdminView = isset($esVistaAdmin) && $esVistaAdmin === true; // Variable setea
                             <div class="container">
 
                                 <!-- cont -->
-                                <div class="collapse navbar-collapse" id="mainNavbar">
+                                <div class="collapse navbar-collapse w-100 justify-content-between align-items-center" id="mainNavbar">
 
                                     <?php
                                     // Logo
-                                    $logoUrl = isset($datosHeader['logo']) ? $datosHeader['logo'] : '/Fragancias Prime/public/img/prime.png';
+                                    $logoUrl = isset($datosHeader['logo']) ? $datosHeader['logo'] : 'img/prime.png';
+                                    $logoUrl = asset_url($logoUrl);
                                     echo '<a class="navbar-brand d-flex align-items-center" href="?controller=home&action=index">';
                                     echo '<img src="' . $logoUrl . '" alt="PRIME" class="navbar-logo">';
                                     echo '</a>';

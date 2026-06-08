@@ -1,6 +1,7 @@
+<?php require_once __DIR__ . '/../helpers/view.php'; ?>
 <?php require __DIR__ . '/layouts/header.php'; ?>
 
-<link rel="stylesheet" href="/public/css/carrito.css">
+<link rel="stylesheet" href="<?= asset_url('css/carrito.css') ?>">
 
 <div class="carrito-container">
 
@@ -28,16 +29,11 @@
                     <div class="item-img">
                         <?php
                         // Construir ruta de imagen
-                        $rutaImagen = '';
-                        if (!empty($p['imagen'])) {
-                            $rutaImagen = '/Fragancias Prime/public/upload/productos/' . $p['imagen'];
-                        } elseif (!empty($p['pronombre'])) {
-                            $rutaImagen = $p['pronombre'];
-                        }
+                        $rutaImagen = product_image_url($p, 'Producto sin imagen');
                         ?>
                         <img src="<?= htmlspecialchars($rutaImagen) ?>"
                             alt="<?= htmlspecialchars($p['prodetalle']) ?>"
-                            onerror="this.src='/Fragancias Prime/public/img/no-image.png'">
+                            onerror="this.onerror=null;this.src='<?= htmlspecialchars(placeholder_image_url('Producto sin imagen'), ENT_QUOTES) ?>'">
                     </div>
 
                     <div class="item-info">

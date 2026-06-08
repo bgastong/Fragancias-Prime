@@ -15,9 +15,9 @@ class ProductoController
         }
 
         $productoModel = new Producto();
-        $producto = $productoModel->obtenerPorId($id);
+        $productoDetalle = $productoModel->obtenerPorId($id);
 
-        if (!$producto) {
+        if (!$productoDetalle) {
             header("Location: ?controller=home&action=index");
             exit;
         }
@@ -27,7 +27,7 @@ class ProductoController
         $usuario = $_SESSION['usuario'] ?? null;
         $menu = obtenerMenuPorDefecto($usuario);
         $datosHeader = obtenerDatosHeaderDesdeControlador($usuario, $menu);
-        render(__DIR__ . '/../vista/detalle_producto.php', ['producto' => $producto, 'datosHeader' => $datosHeader]);
+        render(__DIR__ . '/../vista/detalle_producto.php', ['productoData' => $productoDetalle, 'datosHeader' => $datosHeader]);
     }
 
     public function listar()
@@ -93,7 +93,7 @@ class ProductoController
                 if (move_uploaded_file($_FILES['imagen']['tmp_name'], $rutaDestino)) {
                     $datos['imagen'] = $nombreArchivo;
                     // Guardar la ruta completa en pronombre
-                    $datos['pronombre'] = '/Fragancias Prime/public/upload/productos/' . $nombreArchivo;
+                    $datos['pronombre'] = 'upload/productos/' . $nombreArchivo;
                 }
             } else {
                 // Si no hay imagen, usar ruta vacia
@@ -173,7 +173,7 @@ class ProductoController
                 $usuario = $_SESSION['usuario'] ?? null;
                 $menu = obtenerMenuPorDefecto($usuario);
                 $datosHeader = obtenerDatosHeaderDesdeControlador($usuario, $menu);
-                render(__DIR__ . '/../vista-admin/productos-editar.php', ['producto' => $producto, 'datosHeader' => $datosHeader, 'esVistaAdmin' => true]);
+                render(__DIR__ . '/../vista-admin/productos-editar.php', ['productoData' => $producto, 'datosHeader' => $datosHeader, 'esVistaAdmin' => true]);
                 return;
             }
 
@@ -196,7 +196,7 @@ class ProductoController
 
                 if (move_uploaded_file($_FILES['imagen']['tmp_name'], $rutaDestino)) { // Nueva imagen subida
                     $datos['imagen'] = $nombreArchivo; // Actualizar con nueva imagen
-                    $datos['pronombre'] = '/Fragancias Prime/public/upload/productos/' . $nombreArchivo; // Actualizar ruta
+                    $datos['pronombre'] = 'upload/productos/' . $nombreArchivo; // Actualizar ruta
                 }
             }
 
@@ -214,7 +214,7 @@ class ProductoController
                 $usuario = $_SESSION['usuario'] ?? null;
                 $menu = obtenerMenuPorDefecto($usuario);
                 $datosHeader = obtenerDatosHeaderDesdeControlador($usuario, $menu);
-                render(__DIR__ . '/../vista-admin/productos-editar.php', ['producto' => $producto, 'datosHeader' => $datosHeader, 'esVistaAdmin' => true]);
+                render(__DIR__ . '/../vista-admin/productos-editar.php', ['productoData' => $producto, 'datosHeader' => $datosHeader, 'esVistaAdmin' => true]);
                 return;
             }
         }
@@ -225,7 +225,7 @@ class ProductoController
         $usuario = $_SESSION['usuario'] ?? null;
         $menu = obtenerMenuPorDefecto($usuario);
         $datosHeader = obtenerDatosHeaderDesdeControlador($usuario, $menu);
-        render(__DIR__ . '/../vista-admin/productos-editar.php', ['producto' => $producto, 'datosHeader' => $datosHeader, 'esVistaAdmin' => true]);
+        render(__DIR__ . '/../vista-admin/productos-editar.php', ['productoData' => $producto, 'datosHeader' => $datosHeader, 'esVistaAdmin' => true]);
     }
 
     public function eliminar() //ABM - BAJA
@@ -270,6 +270,34 @@ class ProductoController
 
         header("Location: ?controller=producto&action=listar");
         exit;
+    }
+
+    public function buscar()
+    {
+        $termino = trim((string) ($_GET['q'] ?? ''));
+        if ($termino === '') {
+            header("Location: ?controller=home&action=index");
+            exit;
+        }
+
+        $productoModel = new Producto();
+        $productosSlider = $productoModel->buscar($termino);
+
+        require_once __DIR__ . '/../helpers/view.php';
+        require_once __DIR__ . '/../helpers/header.php';
+
+        $usuario = $_SESSION['usuario'] ?? null;
+        $menuIzquierdo = [
+            ['key' => 'inicio', 'label' => 'Inicio', 'href' => '?controller=home&action=index', 'icon' => 'bi-house'],
+            ['key' => 'buscar', 'label' => 'Buscar', 'href' => '?controller=producto&action=buscar', 'icon' => 'bi-search'],
+        ];
+
+        $datosHeader = obtenerDatosHeaderDesdeControlador($usuario, $menuIzquierdo);
+        render(__DIR__ . '/../vista/home.php', [
+            'productosSlider' => $productosSlider,
+            'datosHeader' => $datosHeader,
+            'busqueda' => $termino,
+        ]);
     }
 }
 

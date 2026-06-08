@@ -9,7 +9,7 @@ function getHeaderData($usuario = null, $menuItems = [])
     $data = [];
 
     // Logo
-    $data['logo'] = '/Fragancias Prime/public/img/prime.png';
+    $data['logo'] = 'img/prime.png';
 
     // Menu a la izquierda
     $data['leftMenu'] = $menuItems;
@@ -97,7 +97,7 @@ function obtenerDatosHeaderDesdeControlador($usuario = null, $menuIzquierdo = nu
     }
 
     $datos = [];
-    $datos['logo'] = '/Fragancias Prime/public/img/prime.png';
+    $datos['logo'] = 'img/prime.png';
     $datos['menuIzquierdo'] = $menuIzquierdo;
 
     // autenticacion

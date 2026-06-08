@@ -9,6 +9,22 @@
     padding: 0.75rem 0;
 }
 
+.navbar .container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.navbar-collapse {
+    align-items: center;
+    gap: 1rem;
+}
+
+.navbar-nav {
+    align-items: center;
+}
+
 .navbar-logo {
     max-height: 65px;
     width: auto;
@@ -18,12 +34,14 @@
 .navbar-brand {
     padding: 0;
     margin-right: 2rem;
+    flex: 0 0 auto;
 }
 
 /* Buscador */
 .search-form {
     max-width: 650px;
     margin: 0 auto;
+    flex: 1 1 320px;
 }
 
 .search-wrapper {
@@ -112,9 +130,14 @@
 
 /* Responsive */
 @media (max-width: 991px) {
+    .navbar .container {
+        align-items: flex-start;
+    }
+
     .search-form {
         max-width: 100%;
         margin: 1rem 0;
+        flex-basis: 100%;
     }
     
     .navbar-nav {

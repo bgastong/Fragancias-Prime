@@ -1,13 +1,15 @@
 <?php
 $esVistaAdmin = true;
 $activeMenu = 'productos';
+require_once __DIR__ . '/../helpers/view.php';
 require_once __DIR__ . '/../vista/layouts/header.php';
+$productoData = (array) ($productoData ?? $producto ?? []);
 ?>
 
 <div class="admin-content">
     <div class="container-fluid">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1>Editar Producto #<?= $producto['idproducto'] ?></h1>
+            <h1>Editar Producto #<?= $productoData['idproducto'] ?></h1>
             <a href="?controller=producto&action=listar" class="btn btn-secondary">
                 <i class="bi bi-arrow-left me-2"></i>Volver al Listado
             </a>
@@ -23,14 +25,14 @@ require_once __DIR__ . '/../vista/layouts/header.php';
 
         <div class="card">
             <div class="card-body">
-                <form method="POST" action="?controller=producto&action=editar&id=<?= $producto['idproducto'] ?>" enctype="multipart/form-data">
+                <form method="POST" action="?controller=producto&action=editar&id=<?= $productoData['idproducto'] ?>" enctype="multipart/form-data">
 
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="prodetalle" class="form-label">Nombre del Producto <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="prodetalle" name="prodetalle"
-                                    value="<?= htmlspecialchars($producto['prodetalle']) ?>" required
+                                    value="<?= htmlspecialchars($productoData['prodetalle']) ?>" required
                                     placeholder="Ej: Perfume Azzaro Chrome">
                                 <small class="form-text text-muted">Este sera el nombre visible del producto</small>
                             </div>
@@ -40,7 +42,7 @@ require_once __DIR__ . '/../vista/layouts/header.php';
                             <div class="mb-3">
                                 <label for="procantstock" class="form-label">Stock</label>
                                 <input type="number" class="form-control" id="procantstock" name="procantstock"
-                                    value="<?= $producto['procantstock'] ?>" min="0">
+                                    value="<?= $productoData['procantstock'] ?>" min="0">
                             </div>
                         </div>
 
@@ -48,14 +50,14 @@ require_once __DIR__ . '/../vista/layouts/header.php';
                             <div class="mb-3">
                                 <label for="precio" class="form-label">Precio</label>
                                 <input type="number" class="form-control" id="precio" name="precio" step="0.01" min="0"
-                                    value="<?= $producto['precio'] ?? 0 ?>">
+                                    value="<?= $productoData['precio'] ?? 0 ?>">
                             </div>
                         </div>
                     </div>
 
                     <div class="mb-3">
                         <label for="descripcion" class="form-label">Descripcion Larga</label>
-                        <textarea class="form-control" id="descripcion" name="descripcion" rows="4" placeholder="Descripcion detallada del producto (opcional)"><?= htmlspecialchars($producto['descripcion'] ?? '') ?></textarea>
+                        <textarea class="form-control" id="descripcion" name="descripcion" rows="4" placeholder="Descripcion detallada del producto (opcional)"><?= htmlspecialchars($productoData['descripcion'] ?? '') ?></textarea>
                         <small class="form-text text-muted">Descripcion completa que se muestra en la pagina de detalle</small>
                     </div>
 
@@ -64,7 +66,7 @@ require_once __DIR__ . '/../vista/layouts/header.php';
                             <div class="mb-3">
                                 <label for="subtitulo" class="form-label">Subtitulo (para slider)</label>
                                 <input type="text" class="form-control" id="subtitulo" name="subtitulo"
-                                    value="<?= htmlspecialchars($producto['subtitulo'] ?? '') ?>">
+                                    value="<?= htmlspecialchars($productoData['subtitulo'] ?? '') ?>">
                             </div>
                         </div>
 
@@ -72,7 +74,7 @@ require_once __DIR__ . '/../vista/layouts/header.php';
                             <div class="mb-3">
                                 <label for="orden" class="form-label">Orden en Slider</label>
                                 <input type="number" class="form-control" id="orden" name="orden"
-                                    value="<?= $producto['orden'] ?? 0 ?>" min="0">
+                                    value="<?= $productoData['orden'] ?? 0 ?>" min="0">
                             </div>
                         </div>
                     </div>
@@ -80,9 +82,9 @@ require_once __DIR__ . '/../vista/layouts/header.php';
                     <div class="mb-3">
                         <label for="imagen" class="form-label">Imagen del Producto</label>
 
-                        <?php if (!empty($producto['imagen'])): ?>
+                        <?php if (!empty($productoData['imagen'])): ?>
                             <div class="mb-2">
-                                <img src="/Fragancias Prime/public/upload/productos/<?= htmlspecialchars($producto['imagen']) ?>"
+                                <img src="<?= htmlspecialchars(product_image_url($productoData, 'Imagen actual')) ?>"
                                     alt="Imagen actual"
                                     style="max-width: 200px; border-radius: 8px; border: 1px solid #ddd;">
                                 <p class="text-muted small mt-1">Imagen actual</p>
@@ -91,7 +93,7 @@ require_once __DIR__ . '/../vista/layouts/header.php';
 
                         <input type="file" class="form-control" id="imagen" name="imagen" accept="image/*">
                         <small class="text-muted">
-                            <?= !empty($producto['imagen']) ? 'Deja vacio para mantener la imagen actual. ' : '' ?>
+                            <?= !empty($productoData['imagen']) ? 'Deja vacio para mantener la imagen actual. ' : '' ?>
                             Formatos aceptados: JPG, PNG, WEBP. Tamano maximo: 5MB
                         </small>
                     </div>
